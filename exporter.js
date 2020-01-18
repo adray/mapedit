@@ -33,7 +33,7 @@ let exporter = function() {
         // First pass
         let grid = createGrid(context.width * context.height);
         for (let tile of context.tiles) {
-            let wrapper = { x: tile.x, y: tile.y, used: false, item: tile};
+            let wrapper = { x: tile.x, y: tile.y, used: false, partnered: false, item: tile};
             let index = getIndex(wrapper.x, wrapper.y);
             if (grid[index] === undefined && isRoom(tile)) {
                 // NOTE: This makes an assumption:
@@ -66,6 +66,9 @@ let exporter = function() {
                 }
 
                 grid[index] = wrapper;
+            } else {
+                wrapper.used = true;
+                grid[index] = wrapper;
             }
         }
 
@@ -83,9 +86,9 @@ let exporter = function() {
         // 3rd pass : Write everything else
         for (let tile of context.tiles) {
             switch (tile.type) {
-                //case "start":
-                //    context.output += context.padding + `$` + context.newline;
-                //    break;
+                case "start":
+                    context.output += context.padding + `<!-- Start: [${tile.x+context.offsetX}, ${tile.y+context.offsetY}] -->` + context.newline;
+                    break;
                 case "end":
                     context.output += context.padding +
                         `<Exit X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}" OnEnter="Trigger" />` + context.newline;
@@ -126,7 +129,62 @@ let exporter = function() {
                     }
                     break;
                 case "jump":
+                    {
+                        const JumpVertical = "Vertical";
+                        const JumpHori = "Horizontal";
+                        let jumpType = undefined;
+                        let endX = tile.x;
+                        let endY = tile.y;
 
+                        for (let x = tile.x-1; x >= 0; x--) {
+                            let index = getIndex(x, tile.y);
+                            let nextTile = grid[index];
+                            if (nextTile !== undefined && !nextTile.item.partnered && nextTile.item.type === "jump") {
+                                jumpType = JumpHori;
+                                endX = x;
+                                break;
+                            }
+                            else if (nextTile === undefined || nextTile.item.type !== "hole") {
+                                break;
+                            }
+                        }
+
+                        if (jumpType === undefined) {
+                            for (let y = tile.y-1; y >= 0; y++) {
+                                let index = getIndex(tile.x, y);
+                                let nextTile = grid[index];
+                                if (nextTile !== undefined && !nextTile.item.partnered && nextTile.item.type === "jump") {
+                                    jumpType = JumpVertical;
+                                    endY = y;
+                                    break;
+                                }
+                                else if (nextTile === undefined || nextTile.item.type !== "hole") {
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (jumpType !== undefined) {
+                            grid[getIndex(tile.x, tile.y)].partnered = true;
+                            if (jumpType === JumpVertical) {
+                                context.output += context.padding + 
+                                    `<JumpPad Orientation="${jumpType}" X="${tile.x+context.offsetX}">` + context.newline;
+                                context.indent();
+                                context.output += context.padding + `<Start Y="${tile.y+context.offsetY}" />` + context.newline;
+                                context.output += context.padding + `<End Y="${endY+context.offsetY}" />` + context.newline;
+                                context.unindent();
+                                context.output += context.padding + `</JumpPad>` + context.newline;
+                            } else if (jumpType === JumpHori) {
+                                context.output += context.padding + 
+                                    `<JumpPad Orientation="${jumpType}" Y="${tile.y+context.offsetY}">` + context.newline;
+                                context.indent();
+                                context.output += context.padding + `<Start X="${tile.x+context.offsetX}" />` + context.newline;
+                                context.output += context.padding + `<End X="${endX+context.offsetX}" />` + context.newline;
+                                context.unindent();
+                                context.output += context.padding + `</JumpPad>` + context.newline;
+                            }
+                        }
+                    }
                     break;
                 case "door":
                     {
