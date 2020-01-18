@@ -33,12 +33,11 @@ let exporter = function() {
         // First pass
         let grid = createGrid(context.width * context.height);
         for (let tile of context.tiles) {
-            let wrapper = { x: tile.x, y: tile.y, item: tile};
+            let wrapper = { x: tile.x, y: tile.y, used: false, item: tile};
             let index = getIndex(wrapper.x, wrapper.y);
             if (grid[index] === undefined && isRoom(tile)) {
                 // NOTE: This makes an assumption:
                 // tile.y >= previous.y AND (tile.y > previous.y OR tile.x > previous.x)
-                let shouldAdd = true;
 
                 if (wrapper.x > 0 && wrapper.y > 0) {
                     let left = getIndex((wrapper.x - 1), wrapper.y);
@@ -47,6 +46,9 @@ let exporter = function() {
                     if (grid[left] !== undefined &&
                         grid[up] !== undefined &&
                         grid[diagonal] !== undefined &&
+                        !grid[left].used &&
+                        !grid[up].used &&
+                        !grid[diagonal].used &&
                         isRoom(grid[left].item) &&
                         isRoom(grid[up].item) &&
                         isRoom(grid[diagonal].item) &&
@@ -56,23 +58,21 @@ let exporter = function() {
                         context.output += context.padding +
                             `<Room X="${grid[diagonal].x + context.offsetX}" Y="${grid[diagonal].y + context.offsetY}" Type="Small" />` + 
                             context.newline;
-                        shouldAdd = false;
-                        grid[up] = undefined;
-                        grid[left] = undefined;
-                        grid[diagonal] = undefined;
+                        grid[up].used = true;
+                        grid[left].used = true;
+                        grid[diagonal].used = true;
+                        wrapper.used = true;
                     }
                 }
 
-                if (shouldAdd) {
-                    grid[index] = wrapper;
-                }
+                grid[index] = wrapper;
             }
         }
 
         // 2nd pass : Write corridors
         // TODO: write 1x1 corridors (ideally using cols and rows)
         for (let tile of grid) {
-            if (tile !== undefined) {
+            if (tile !== undefined && !tile.used) {
                 // We found a 1x1 room
                 context.output += context.padding +
                 `<Room X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}" Type="Corridor" />` + 
@@ -116,12 +116,12 @@ let exporter = function() {
                     if (up !== undefined && grid[up] !== undefined && isRoom(grid[up].item) &&
                         down !== undefined && grid[down] !== undefined && isRoom(grid[down].item)) {
                             context.output += context.padding +
-                                `<FakeWall X1="${tile.x}" Y1="${tile.y}" X2="${tile.x}" Y2="${tile.y-1}" />` + context.newline;
+                                `<FakeWall X1="${tile.x + context.offsetX}" Y1="${tile.y + context.offsetX}" X2="${tile.x + context.offsetX}" Y2="${tile.y-1 + context.offsetX}" />` + context.newline;
                         }
                     else if (left !== undefined && grid[left] !== undefined && isRoom(grid[left].item) &&
                         right !== undefined && grid[right] !== undefined && isRoom(grid[right].item)) {
                             context.output += context.padding +
-                                `<FakeWall X1="${tile.x-1}" Y1="${tile.y}" X2="${tile.x}" Y2="${tile.y}" />` + context.newline;
+                                `<FakeWall X1="${tile.x-1 + context.offsetX}" Y1="${tile.y + context.offsetX}" X2="${tile.x + context.offsetX}" Y2="${tile.y + context.offsetX}" />` + context.newline;
                         }
                     }
                     break;
@@ -137,12 +137,12 @@ let exporter = function() {
                     if (up !== undefined && grid[up] !== undefined && isRoom(grid[up].item) &&
                         down !== undefined && grid[down] !== undefined && isRoom(grid[down].item)) {
                             context.output += context.padding +
-                                `<Door X1="${tile.x}" Y1="${tile.y}" X2="${tile.x}" Y2="${tile.y-1}" Locked="True" ID="Door" />` + context.newline;
+                                `<Door X1="${tile.x + context.offsetX}" Y1="${tile.y + context.offsetX}" X2="${tile.x + context.offsetX}" Y2="${tile.y-1 + context.offsetX}" Locked="True" ID="Door" />` + context.newline;
                         }
                     else if (left !== undefined && grid[left] !== undefined && isRoom(grid[left].item) &&
                         right !== undefined && grid[right] !== undefined && isRoom(grid[right].item)) {
                             context.output += context.padding +
-                                `<Door X1="${tile.x-1}" Y1="${tile.y}" X2="${tile.x}" Y2="${tile.y}" Locked="True" ID="Door" />` + context.newline;
+                                `<Door X1="${tile.x-1 + context.offsetX}" Y1="${tile.y + context.offsetX}" X2="${tile.x + context.offsetX}" Y2="${tile.y + context.offsetX}" Locked="True" ID="Door" />` + context.newline;
                         }
                     }
                     break;
