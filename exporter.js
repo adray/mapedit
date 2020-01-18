@@ -119,12 +119,12 @@ let exporter = function() {
                     if (up !== undefined && grid[up] !== undefined && isRoom(grid[up].item) &&
                         down !== undefined && grid[down] !== undefined && isRoom(grid[down].item)) {
                             context.output += context.padding +
-                                `<FakeWall X1="${tile.x + context.offsetX}" Y1="${tile.y + context.offsetX}" X2="${tile.x + context.offsetX}" Y2="${tile.y-1 + context.offsetX}" />` + context.newline;
+                                `<FakeWall X1="${tile.x + context.offsetX}" Y1="${tile.y + context.offsetY}" X2="${tile.x + context.offsetX}" Y2="${tile.y-1 + context.offsetY}" />` + context.newline;
                         }
                     else if (left !== undefined && grid[left] !== undefined && isRoom(grid[left].item) &&
                         right !== undefined && grid[right] !== undefined && isRoom(grid[right].item)) {
                             context.output += context.padding +
-                                `<FakeWall X1="${tile.x-1 + context.offsetX}" Y1="${tile.y + context.offsetX}" X2="${tile.x + context.offsetX}" Y2="${tile.y + context.offsetX}" />` + context.newline;
+                                `<FakeWall X1="${tile.x-1 + context.offsetX}" Y1="${tile.y + context.offsetY}" X2="${tile.x + context.offsetX}" Y2="${tile.y + context.offsetY}" />` + context.newline;
                         }
                     }
                     break;
@@ -150,7 +150,7 @@ let exporter = function() {
                         }
 
                         if (jumpType === undefined) {
-                            for (let y = tile.y-1; y >= 0; y++) {
+                            for (let y = tile.y-1; y >= 0; y--) {
                                 let index = getIndex(tile.x, y);
                                 let nextTile = grid[index];
                                 if (nextTile !== undefined && !nextTile.item.partnered && nextTile.item.type === "jump") {
