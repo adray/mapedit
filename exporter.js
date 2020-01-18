@@ -195,12 +195,12 @@ let exporter = function() {
                     if (up !== undefined && grid[up] !== undefined && isRoom(grid[up].item) &&
                         down !== undefined && grid[down] !== undefined && isRoom(grid[down].item)) {
                             context.output += context.padding +
-                                `<Door X1="${tile.x + context.offsetX}" Y1="${tile.y + context.offsetX}" X2="${tile.x + context.offsetX}" Y2="${tile.y-1 + context.offsetX}" Locked="True" ID="Door" />` + context.newline;
+                                `<Door X1="${tile.x + context.offsetX}" Y1="${tile.y + context.offsetY}" X2="${tile.x + context.offsetX}" Y2="${tile.y-1 + context.offsetY}" Locked="True" ID="Door" />` + context.newline;
                         }
                     else if (left !== undefined && grid[left] !== undefined && isRoom(grid[left].item) &&
                         right !== undefined && grid[right] !== undefined && isRoom(grid[right].item)) {
                             context.output += context.padding +
-                                `<Door X1="${tile.x-1 + context.offsetX}" Y1="${tile.y + context.offsetX}" X2="${tile.x + context.offsetX}" Y2="${tile.y + context.offsetX}" Locked="True" ID="Door" />` + context.newline;
+                                `<Door X1="${tile.x-1 + context.offsetX}" Y1="${tile.y + context.offsetY}" X2="${tile.x + context.offsetX}" Y2="${tile.y + context.offsetY}" Locked="True" ID="Door" />` + context.newline;
                         }
                     }
                     break;
