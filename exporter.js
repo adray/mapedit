@@ -26,20 +26,24 @@ let exporter = function() {
             return tile.type !== "wall" && tile.type !== "hole";
         }
 
+        function getIndex(x, y) {
+            return x * context.height + y;
+        }
+
         // First pass
         let grid = createGrid(context.width * context.height);
         for (let tile of context.tiles) {
             let wrapper = { x: tile.x, y: tile.y, item: tile};
-            let index = wrapper.x * context.height + wrapper.y;
+            let index = getIndex(wrapper.x, wrapper.y);
             if (grid[index] === undefined && isRoom(tile)) {
                 // NOTE: This makes an assumption:
                 // tile.y >= previous.y AND (tile.y > previous.y OR tile.x > previous.x)
                 let shouldAdd = true;
 
                 if (wrapper.x > 0 && wrapper.y > 0) {
-                    let left = (wrapper.x - 1) * context.height + wrapper.y;
-                    let up = wrapper.x * context.height + wrapper.y - 1;
-                    let diagonal = (wrapper.x - 1) * context.height + wrapper.y - 1;
+                    let left = getIndex((wrapper.x - 1), wrapper.y);
+                    let up = getIndex(wrapper.x, wrapper.y - 1);
+                    let diagonal = getIndex((wrapper.x - 1), wrapper.y - 1);
                     if (grid[left] !== undefined &&
                         grid[up] !== undefined &&
                         grid[diagonal] !== undefined &&
@@ -104,13 +108,43 @@ let exporter = function() {
                         `<Terminal X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}" />` + context.newline;
                     break;
                 case "hidden":
-                    // TODO
-                    //context.output += ""
+                    {
+                    let up = tile.y > 0 ? getIndex(tile.x, tile.y - 1) : undefined;
+                    let down = tile.y+1 < context.height ? getIndex(tile.x, tile.y + 1) : undefined;
+                    let left = tile.x > 0 ? getIndex(tile.x-1, tile.y) : undefined;
+                    let right = tile.x + 1 < context.width ? getIndex(tile.x+1, tile.y) : undefined;
+                    if (up !== undefined && grid[up] !== undefined && isRoom(grid[up].item) &&
+                        down !== undefined && grid[down] !== undefined && isRoom(grid[down].item)) {
+                            context.output += context.padding +
+                                `<FakeWall X1="${tile.x}" Y1="${tile.y}" X2="${tile.x}" Y2="${tile.y-1}" />` + context.newline;
+                        }
+                    else if (left !== undefined && grid[left] !== undefined && isRoom(grid[left].item) &&
+                        right !== undefined && grid[right] !== undefined && isRoom(grid[right].item)) {
+                            context.output += context.padding +
+                                `<FakeWall X1="${tile.x-1}" Y1="${tile.y}" X2="${tile.x}" Y2="${tile.y}" />` + context.newline;
+                        }
+                    }
                     break;
                 case "jump":
+
                     break;
                 case "door":
-
+                    {
+                    let up = tile.y > 0 ? getIndex(tile.x, tile.y - 1) : undefined;
+                    let down = tile.y+1 < context.height ? getIndex(tile.x, tile.y + 1) : undefined;
+                    let left = tile.x > 0 ? getIndex(tile.x-1, tile.y) : undefined;
+                    let right = tile.x + 1 < context.width ? getIndex(tile.x+1, tile.y) : undefined;
+                    if (up !== undefined && grid[up] !== undefined && isRoom(grid[up].item) &&
+                        down !== undefined && grid[down] !== undefined && isRoom(grid[down].item)) {
+                            context.output += context.padding +
+                                `<Door X1="${tile.x}" Y1="${tile.y}" X2="${tile.x}" Y2="${tile.y-1}" Locked="True" ID="Door" />` + context.newline;
+                        }
+                    else if (left !== undefined && grid[left] !== undefined && isRoom(grid[left].item) &&
+                        right !== undefined && grid[right] !== undefined && isRoom(grid[right].item)) {
+                            context.output += context.padding +
+                                `<Door X1="${tile.x-1}" Y1="${tile.y}" X2="${tile.x}" Y2="${tile.y}" Locked="True" ID="Door" />` + context.newline;
+                        }
+                    }
                     break;
             }
         }
