@@ -63,7 +63,8 @@ Vue.component('loadMap', {
 
 Vue.component('editor', {
         data: function() {
-            let palette = this.createPallete();
+            let palette = this.createPalette();
+            let effects = this.createEffects();
             return {
                 tiles: this.createGrid(7, 6),
                 gridWidth: "_1",
@@ -72,11 +73,16 @@ Vue.component('editor', {
                 width: [1,2,3],
                 height: [1,2,3],
                 exportedData: "",
-                showLoadMap: false
+                showLoadMap: false,
+                selectedEffect: effects[0].id,
+                effects: effects
             };
         },
         methods: {
-            createPallete: function() {
+            createEffects: function() {
+                return [{ id:0, text:"No effect"}, {id:1, text:"Extreme Cold"}, {id:2, text: "Extreme Heat"}];
+            },
+            createPalette: function() {
                 return [
                     {
                         id: 0,
@@ -159,10 +165,14 @@ Vue.component('editor', {
             exportMap: function() {
                 let w = this.$refs.width.value * 7;
                 let h = this.$refs.height.value * 6;
-                this.exportedData = exporter.exportMap(this.tiles, w, h);
+                this.exportedData = exporter.exportMap(this.tiles, w, h, Number(this.selectedEffect));
             },
             saveMap: function() {
-                let saveData = exporter.saveFileJSON(this.tiles, this.$refs.width.value, this.$refs.height.value);
+                let saveData = exporter.saveFileJSON(
+                    this.tiles,
+                    this.$refs.width.value,
+                    this.$refs.height.value,
+                    Number(this.selectedEffect));
                 let mapname = this.$refs.mapname.value;
                 if (mapname !== "") {
                     storage.saveMapData(mapname, saveData);
@@ -188,6 +198,7 @@ Vue.component('editor', {
                     this.$refs.mapname.value = map;
                     this.$refs.width.value = mapInfo.widthScale;
                     this.$refs.height.value = mapInfo.heightScale;
+                    this.selectedEffect = mapInfo.effect || 0;
                     this.resize();
                     
                     let id = 0;
@@ -215,6 +226,9 @@ Vue.component('editor', {
                 </select>\
                 <select name="height" ref="height" v-on:change="resize">\
                     <option v-for="size in height" v-bind:value="size">{{size}}</option>\
+                </select>\
+                <select v-model="selectedEffect" name="effect">\
+                    <option v-for="effect in effects" v-bind:selected="this.selectedEffect === effect.id" v-bind:value="effect.id">{{effect.text}}</option>"\
                 </select>\
                 <palette v-bind:items="palette" v-on:palette-update="paletteUpdate($event)" />\
                 Name:<input name="mapname" ref="mapname" />\

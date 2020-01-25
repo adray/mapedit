@@ -219,9 +219,21 @@ let exporter = function() {
                     break;
             }
         }
+
+        // Effects
+        switch (context.effect) {
+            case 1:
+                context.output += context.padding +
+                    `<Effect Type="Cold" />` + context.newline;
+                break;
+            case 2:
+                context.output += context.padding +
+                    `<Effect Type="Heat" />` + context.newline;
+                break;
+        }
     }
 
-    let exportMap = function(tiles, width, height) {
+    let exportMap = function(tiles, width, height, effect) {
         let context = {
             tiles: tiles,
             output: "",
@@ -231,6 +243,7 @@ let exporter = function() {
             height: height,
             offsetX: 4,
             offsetY: 5,
+            effect: effect,
             indent: function() {
                 this.padding += "    ";
             },
@@ -245,29 +258,11 @@ let exporter = function() {
         return context.output;
     };
 
-    let saveFileCsv = function(tiles, widthScale, heightScale) {
-        let output = "";
-        output += `${widthScale},${heightScale}\r\n`;
-        let lastTile = undefined;
-        for (let tile of tiles) {
-            
-            if (lastTile !== undefined && tile.y > lastTile.y) {
-                output += "\r\n" + tile.tile_id;
-            } else if (lastTile === undefined) {
-                output += tile.tile_id;
-            } else {
-                output += "," + tile.tile_id;
-            }            
-
-            lastTile = tile;
-        }
-        return output;
-    };
-
-    let saveFileJSON = function(tiles, widthScale, heightScale) {
+    let saveFileJSON = function(tiles, widthScale, heightScale, effect) {
         let saveData = {
             widthScale: widthScale,
             heightScale: heightScale,
+            effect: effect,
             data: []
         };
         for (let tile of tiles) {
@@ -282,7 +277,6 @@ let exporter = function() {
 
     return {
         exportMap: exportMap,
-        saveFileCsv: saveFileCsv,
         saveFileJSON: saveFileJSON,
         loadFileJSON: loadFileJSON
     };
