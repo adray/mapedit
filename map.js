@@ -127,6 +127,11 @@ Vue.component('editor', {
                         id: 9,
                         type: "door",
                         value: "D"
+                    },
+                    {
+                        id: 10,
+                        type: "icespike",
+                        value: "S"
                     }
                 ];
             },

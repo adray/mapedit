@@ -45,6 +45,13 @@ button.tile#enemy
     background-color: white;
 }
 
+button.tile#icespike
+{
+    text-align: center;
+    font-size: 20px;
+    background-color: white;
+}
+
 button.tile#terminal
 {
     text-align: center;

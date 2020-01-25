@@ -204,6 +204,13 @@ let exporter = function() {
                         }
                     }
                     break;
+                case "icespike":
+                    {
+                        context.output += context.padding + 
+                            `<IceSpike X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}" />` +
+                            context.newline;
+                    }
+                    break;
             }
         }
     }
