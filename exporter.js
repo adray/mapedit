@@ -41,7 +41,8 @@ let exporter = function() {
         for (let tile of context.tiles) {
             let wrapper = { x: tile.x, y: tile.y, used: false, partnered: false, item: tile};
             let index = getIndex(wrapper.x, wrapper.y);
-            if (grid[index] === undefined && isRoom(tile) && !isSingleTileRoom(tile)) {
+            let isRoomTile = isRoom(tile);
+            if (grid[index] === undefined && isRoomTile && !isSingleTileRoom(tile)) {
                 // NOTE: This makes an assumption:
                 // tile.y >= previous.y AND (tile.y > previous.y OR tile.x > previous.x)
 
@@ -73,7 +74,7 @@ let exporter = function() {
 
                 grid[index] = wrapper;
             } else {
-                wrapper.used = true;
+                wrapper.used = !isRoomTile;
                 grid[index] = wrapper;
             }
         }
