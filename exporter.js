@@ -22,8 +22,14 @@ let exporter = function() {
             return grid;
         }
 
+        // Things which do not create standard rooms
         function isRoom(tile) {
             return tile.type !== "wall" && tile.type !== "hole";
+        }
+
+        // Things which should only appear in a 1x1 room
+        function isSingleTileRoom(tile) {
+            return tile.type === "icespike";
         }
 
         function getIndex(x, y) {
@@ -35,7 +41,7 @@ let exporter = function() {
         for (let tile of context.tiles) {
             let wrapper = { x: tile.x, y: tile.y, used: false, partnered: false, item: tile};
             let index = getIndex(wrapper.x, wrapper.y);
-            if (grid[index] === undefined && isRoom(tile)) {
+            if (grid[index] === undefined && isRoom(tile) && !isSingleTileRoom(tile)) {
                 // NOTE: This makes an assumption:
                 // tile.y >= previous.y AND (tile.y > previous.y OR tile.x > previous.x)
 
