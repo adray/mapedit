@@ -32,6 +32,13 @@ let exporter = function() {
             return tile.type === "icespike";
         }
 
+        function is2x2Allowed(tile) {
+            if (tile !== undefined) {
+                return !tile.used && isRoom(tile.item) && !isSingleTileRoom(tile.item);
+            }
+            return false;
+        }
+
         function getIndex(x, y) {
             return x * context.height + y;
         }
@@ -50,17 +57,9 @@ let exporter = function() {
                     let left = getIndex((wrapper.x - 1), wrapper.y);
                     let up = getIndex(wrapper.x, wrapper.y - 1);
                     let diagonal = getIndex((wrapper.x - 1), wrapper.y - 1);
-                    if (grid[left] !== undefined &&
-                        grid[up] !== undefined &&
-                        grid[diagonal] !== undefined &&
-                        !grid[left].used &&
-                        !grid[up].used &&
-                        !grid[diagonal].used &&
-                        isRoom(grid[left].item) &&
-                        isRoom(grid[up].item) &&
-                        isRoom(grid[diagonal].item) &&
-                        isRoom(tile)) {
-                        
+                    if (is2x2Allowed(grid[left]) &&
+                        is2x2Allowed(grid[up]) &&
+                        is2x2Allowed(grid[diagonal])) {
                         // We found a 2x2 room
                         context.output += context.padding +
                             `<Room X="${grid[diagonal].x + context.offsetX}" Y="${grid[diagonal].y + context.offsetY}" Type="Small" />` + 
