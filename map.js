@@ -4,13 +4,13 @@ Vue.component('tile', {
         template: '\
                     <button class="tile"\
                         v-bind:id="type"\
-                        v-on:click="cycle"\
+                        v-on:click="tileClick"\
                         v-bind:title="title"\
                         >{{value}}</button>',
         props: ["id", "tile_id", "type", "value", "x", "y", "palette"],
         methods: {
-            cycle: function(){
-                this.$emit('cycle', this.id);
+            tileClick: function(){
+                this.$emit('tileClick', this.id);
             }
         },
         computed: {
@@ -61,6 +61,52 @@ Vue.component('loadMap', {
     }
 });
 
+Vue.component('parameter', {
+    template: `<div>\
+        {{text}}\
+        <input type="checkbox" v-model="paramValue" v-if="parameterType===${PARAMETERS.PARAMETER_CHECKBOX}" />\
+        <input type="textbox" v-model="paramValue" v-if="parameterType===${PARAMETERS.PARAMETER_TEXTBOX}" />\
+        <select v-model="paramValue" v-if="parameterType===${PARAMETERS.PARAMETER_DROPDOWN}">\
+            <option v-for="item in values" v-bind:selected="this.paramValue === item">{{item}}</option>\
+        </select>\
+        </div>`,
+    props: [ 'id', 'text', 'parameterType', 'values', 'initialValue' ],
+    data: function() {
+        return {
+            paramValue: this.initialValue
+        };
+    },
+    watch: {
+        paramValue: function(newValue, oldValue) {
+            this.$emit("parameterChanged", this.id, newValue);
+        }
+    }
+});
+
+Vue.component('parametersMenu', {
+    template: '<div class="parametersWindow">\
+            <parameter\
+                v-for="param in palette[tile.tile_id].parameters"\
+                v-bind:key="param.id"\
+                v-bind:parameterType="param.control"\
+                v-bind:text="param.text"\
+                v-bind:initialValue="tile.parameters[param.id]"\
+                v-bind:values="param.values"\
+                v-bind:id="param.id"\
+                v-on:parameterChanged="parameterChanged" />\
+            <button v-on:click="exitMenu">Exit</button>\
+        </div>',
+    props: [ 'palette', 'tile' ],
+    methods: {
+        exitMenu: function() {
+            this.$emit("exitParametersMenu");
+        },
+        parameterChanged: function(parameter, value) {
+            this.tile.parameters[parameter] = value;
+        }
+    }
+});
+
 Vue.component('editor', {
         data: function() {
             let palette = this.createPalette();
@@ -74,68 +120,120 @@ Vue.component('editor', {
                 height: [1,2,3],
                 exportedData: "",
                 showLoadMap: false,
+                showParameters: false,
+                selectedTile: undefined,
                 selectedEffect: effects[0].id,
-                effects: effects
+                effects: effects,
+                modes: [{ id: EDITMODES.MODE_PAINT, text:"Paint" }, { id: EDITMODES.MODE_DESIGN, text:"Design"}],
+                editMode: EDITMODES.MODE_PAINT
             };
         },
         methods: {
             createEffects: function() {
-                return [{ id:0, text:"No effect"}, {id:1, text:"Extreme Cold"}, {id:2, text: "Extreme Heat"}];
+                return [
+                    {id:EFFECT_TYPES.EFFECT_TYPE_NONE, text: "No effect"},
+                    {id:EFFECT_TYPES.EFFECT_TYPE_COLD, text: "Extreme Cold"},
+                    {id:EFFECT_TYPES.EFFECT_TYPE_HEAT, text: "Extreme Heat"}];
             },
             createPalette: function() {
                 return [
                     {
-                        id: 0,
+                        id: TILE_TYPES.TILE_EMPTY,
                         type: "empty",
-                        value: ""
+                        value: "",
+                        parameters: [
+                             {
+                                id: PARAMETER_TYPE.PARAMETER_TYPE_HIDDEN,
+                                text:"Hidden",
+                                control:PARAMETERS.PARAMETER_CHECKBOX
+                             } ]
                     },
                     {
-                        id: 1,
+                        id: TILE_TYPES.TILE_WALL,
                         type: "wall",
                         value: ""
                     },
                     {
-                        id: 2,
+                        id: TILE_TYPES.TILE_START,
                         type: "start",
                         value: ""
                     },
                     {
-                        id: 3,
+                        id: TILE_TYPES.TILE_END,
                         type: "end",
                         value: ""
                     },
                     {
-                        id: 4,
+                        id: TILE_TYPES.TILE_HOLE,
                         type: "hole",
                         value: ""
                     },
                     {
-                        id: 5,
+                        id: TILE_TYPES.TILE_ENEMY,
                         type: "enemy",
-                        value: "E"
+                        value: "E",
+                        parameters: [ {
+                            id: PARAMETER_TYPE.PARAMETER_TYPE_DIRECTION,
+                            text:"Direction",
+                            control:PARAMETERS.PARAMETER_DROPDOWN,
+                            values:["Up", "Down", "Right", "Left"]
+                        },
+                        {
+                            id: PARAMETER_TYPE.PARAMETER_TYPE_ELITE,
+                            text:"Elite",
+                            control:PARAMETERS.PARAMETER_CHECKBOX
+                        },
+                        {
+                            id: PARAMETER_TYPE.PARAMETER_TYPE_CLOAK,
+                            text:"Cloak",
+                            control:PARAMETERS.PARAMETER_CHECKBOX
+                        } ]
                     },
                     {
-                        id: 6,
+                        id: TILE_TYPES.TILE_TERMINAL,
                         type: "terminal",
-                        value: "T"
+                        value: "T",
+                        parameters: [
+                            {
+                                id: PARAMETER_TYPE.PARAMETER_TYPE_DOOR1,
+                                text:"Door1", control:PARAMETERS.PARAMETER_TEXTBOX
+                            },
+                            { 
+                                id: PARAMETER_TYPE.PARAMETER_TYPE_DOOR2,
+                                text:"Door2", control:PARAMETERS.PARAMETER_TEXTBOX 
+                            },
+                            {
+                                id: PARAMETER_TYPE.PARAMETER_TYPE_DOOR3,
+                                text:"Door3", control:PARAMETERS.PARAMETER_TEXTBOX
+                            },
+                            {
+                                id: PARAMETER_TYPE.PARAMETER_TYPE_DOOR4,
+                                text:"Door4", control:PARAMETERS.PARAMETER_TEXTBOX
+                            } ]
                     },
                     {
-                        id: 7,
+                        id: TILE_TYPES.TILE_HIDDEN,
                         type: "hidden",
                         value: ""
                     },
                     {
-                        id: 8,
+                        id: TILE_TYPES.TILE_JUMP,
                         type: "jump",
                         value: "J"
                     },
                     {
-                        id: 9,
+                        id: TILE_TYPES.TILE_DOOR,
                         type: "door",
-                        value: "D"
+                        value: "D",
+                        parameters: [
+                            {
+                                id: PARAMETER_TYPE.PARAMETER_TYPE_ID,
+                                text:"ID",
+                                control:PARAMETERS.PARAMETER_TEXTBOX
+                            } ]
                     },
                     {
-                        id: 10,
+                        id: TILE_TYPES.TILE_ICESPIKE,
                         type: "icespike",
                         value: "S"
                     }
@@ -147,7 +245,15 @@ Vue.component('editor', {
                 for (let i = 0; i < height; i++) {
                     for (let j = 0; j < width; j++) {
                         let identifer = i * width + j;
-                        let obj = {id : identifer, tile_id: 0, type:"empty", value:"", x:j, y:i};
+                        let obj = {
+                            id : identifer,
+                            tile_id: TILE_TYPES.TILE_EMPTY,
+                            type:"empty",
+                            value:"",
+                            x:j,
+                            y:i,
+                            parameters: []
+                        };
                         tiles.push(obj);
                     }
                 }
@@ -178,10 +284,30 @@ Vue.component('editor', {
                     storage.saveMapData(mapname, saveData);
                 }
             },
+            tileClick: function(id) {
+                this.selectedTile = this.tiles[id];
+                switch (this.editMode) {
+                    case EDITMODES.MODE_PAINT:
+                        this.cycle(id);
+                        break;
+                    case EDITMODES.MODE_DESIGN:
+                        this.showDesignMenu(id);
+                        break;
+                }
+            },
             cycle: function(id) {
                 this.tiles[id].tile_id = this.selectedPalette.value.id;
                 this.tiles[id].type = this.selectedPalette.value.type;
                 this.tiles[id].value = this.selectedPalette.value.value;
+            },
+            showDesignMenu: function(id) {
+                this.showParameters = true;
+            },
+            exitDesignMenu: function() {
+                this.showParameters = false;
+            },
+            exitDesignMenu: function(id) {
+                this.showParameters = false;
             },
             loadMapMenu: function() {
                 this.showLoadMap = true;
@@ -209,6 +335,12 @@ Vue.component('editor', {
                         this.tiles[id].value = this.palette[paletteID].value;
                         id++;
                     }
+
+                    if (mapInfo.parameters !== undefined) {
+                        for (let param of mapInfo.parameters) {
+                            this.tiles[param.id].parameters = param.parameters;
+                        }
+                    }
                 }
             }
         },
@@ -219,7 +351,7 @@ Vue.component('editor', {
                         v-bind="tile"\
                         v-bind:palette="selectedPalette"\
                         v-bind:key="tile.id"\
-                        v-on:cycle="cycle($event)" />\
+                        v-on:tileClick="tileClick($event)" />\
                 </div>\
                 <select name="width" ref="width" v-on:change="resize">\
                     <option v-for="size in width" v-bind:value="size">{{size}}</option>\
@@ -230,6 +362,9 @@ Vue.component('editor', {
                 <select v-model="selectedEffect" name="effect">\
                     <option v-for="effect in effects" v-bind:selected="this.selectedEffect === effect.id" v-bind:value="effect.id">{{effect.text}}</option>"\
                 </select>\
+                <select v-model="editMode" name="editMode">\
+                    <option v-for="mode in modes" v-bind:selected="this.editMode === mode.id" v-bind:value="mode.id">{{mode.text}}</option>"\
+                </select>\
                 <palette v-bind:items="palette" v-on:palette-update="paletteUpdate($event)" />\
                 Name:<input name="mapname" ref="mapname" />\
                 <button v-on:click="saveMap">Save</button>\
@@ -239,6 +374,10 @@ Vue.component('editor', {
                     <textarea class="export">{{ exportedData }}</textarea>\
                 </div>\
                 <loadMap v-if="showLoadMap" v-on:exitLoadMap="exitLoadMap" v-on:loadMap="loadMap($event)" />\
+                <parametersMenu v-if="showParameters"\
+                    v-bind:palette="this.palette"\
+                    v-bind:tile="this.selectedTile" \
+                    v-on:exitParametersMenu="exitDesignMenu" />\
             </div>'
 });
 

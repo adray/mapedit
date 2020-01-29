@@ -83,17 +83,35 @@ let exporter = function() {
         for (let tile of grid) {
             if (tile !== undefined && !tile.used) {
                 // We found a 1x1 room
+                let hidden = tile.item.parameters[PARAMETER_TYPE.PARAMETER_TYPE_HIDDEN];
                 context.output += context.padding +
-                `<Room X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}" Type="Corridor" />` + 
-                context.newline;
+                `<Room X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}" Type="Corridor"`;
+                
+                if (hidden === true) {
+                    context.output += ` Hidden="True"`;
+                }
+
+                context.output += `/>` + context.newline;
             }
         }
 
+        let directionX = {"Up": 0, "Down": 0, "Right":1, "Left":-1 };
+        let directionY = {"Up": 1, "Down": -1, "Right":0, "Left":0 };
+
         // 3rd pass : Write everything else
         for (let tile of context.tiles) {
+            let id = tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_ID];
+            let doors = [ tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_DOOR1],
+                tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_DOOR2],
+                tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_DOOR3],
+                tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_DOOR4] ];
+            let direction = tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_DIRECTION] || "Up";
+            let elite = tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_ELITE] || false;
+
             switch (tile.type) {
                 case "start":
-                    context.output += context.padding + `<!-- Start: [${tile.x+context.offsetX}, ${tile.y+context.offsetY}] -->` + context.newline;
+                    context.output += context.padding +
+                        `<!-- Start: [${tile.x+context.offsetX}, ${tile.y+context.offsetY}] -->` + context.newline;
                     break;
                 case "end":
                     context.output += context.padding +
@@ -104,17 +122,42 @@ let exporter = function() {
                         `<Room X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}" Type="Hole" />` + context.newline;
                     break;
                 case "enemy":
-                    context.output += context.padding +
-                        `<AI X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}" OnSight="Trigger_Fight">` + context.newline;
-                    context.indent();
-                    context.output += context.padding +
-                        `<Direction X="0" Y="1" />` + context.newline;
-                    context.unindent();
-                    context.output += context.padding + `</AI>` + context.newline;
+                    {
+                        let dirX = directionX[direction];
+                        let dirY = directionY[direction];
+                        context.output += context.padding +
+                            `<AI X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}" OnSight="Trigger_Fight"`;
+                        if (elite) {
+                            context.output += ` Aura="True"`;
+                        }
+                        context.output += `>` + context.newline;
+                        context.indent();
+                        context.output += context.padding +
+                            `<Direction X="${dirX}" Y="${dirY}" />` + context.newline;
+                        context.unindent();
+                        context.output += context.padding + `</AI>` + context.newline;
+                    }
                     break;
                 case "terminal":
-                    context.output += context.padding +
-                        `<Terminal X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}" />` + context.newline;
+                    {
+                        let doorData = "";
+                        context.indent();
+                        for (let door of doors) {
+                            if (door !== undefined) {
+                                doorData += context.padding + `<Door Text="Door" ID="${door}" Locked="True" />` + context.newline;
+                            }
+                        }
+                        context.unindent();
+
+                        if (doorData === "") {
+                            context.output += context.padding +
+                               `<Terminal X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}" />` + context.newline;
+                        } else {
+                            context.output += context.padding +
+                                `<Terminal X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}">` + context.newline
+                                + doorData + context.padding + "</Terminal>" + context.newline;
+                        }
+                    }
                     break;
                 case "hidden":
                     {
@@ -194,19 +237,20 @@ let exporter = function() {
                     break;
                 case "door":
                     {
-                    let up = tile.y > 0 ? getIndex(tile.x, tile.y - 1) : undefined;
-                    let down = tile.y+1 < context.height ? getIndex(tile.x, tile.y + 1) : undefined;
-                    let left = tile.x > 0 ? getIndex(tile.x-1, tile.y) : undefined;
-                    let right = tile.x + 1 < context.width ? getIndex(tile.x+1, tile.y) : undefined;
-                    if (up !== undefined && grid[up] !== undefined && isRoom(grid[up].item) &&
-                        down !== undefined && grid[down] !== undefined && isRoom(grid[down].item)) {
-                            context.output += context.padding +
-                                `<Door X1="${tile.x + context.offsetX}" Y1="${tile.y + context.offsetY}" X2="${tile.x + context.offsetX}" Y2="${tile.y-1 + context.offsetY}" Locked="True" ID="Door" />` + context.newline;
-                        }
-                    else if (left !== undefined && grid[left] !== undefined && isRoom(grid[left].item) &&
-                        right !== undefined && grid[right] !== undefined && isRoom(grid[right].item)) {
-                            context.output += context.padding +
-                                `<Door X1="${tile.x-1 + context.offsetX}" Y1="${tile.y + context.offsetY}" X2="${tile.x + context.offsetX}" Y2="${tile.y + context.offsetY}" Locked="True" ID="Door" />` + context.newline;
+                        let doorID = id || "Door";
+                        let up = tile.y > 0 ? getIndex(tile.x, tile.y - 1) : undefined;
+                        let down = tile.y+1 < context.height ? getIndex(tile.x, tile.y + 1) : undefined;
+                        let left = tile.x > 0 ? getIndex(tile.x-1, tile.y) : undefined;
+                        let right = tile.x + 1 < context.width ? getIndex(tile.x+1, tile.y) : undefined;
+                        if (up !== undefined && grid[up] !== undefined && isRoom(grid[up].item) &&
+                            down !== undefined && grid[down] !== undefined && isRoom(grid[down].item)) {
+                                context.output += context.padding +
+                                    `<Door X1="${tile.x + context.offsetX}" Y1="${tile.y + context.offsetY}" X2="${tile.x + context.offsetX}" Y2="${tile.y-1 + context.offsetY}" Locked="True" ID="${doorID}" />` + context.newline;
+                            }
+                        else if (left !== undefined && grid[left] !== undefined && isRoom(grid[left].item) &&
+                            right !== undefined && grid[right] !== undefined && isRoom(grid[right].item)) {
+                                context.output += context.padding +
+                                    `<Door X1="${tile.x-1 + context.offsetX}" Y1="${tile.y + context.offsetY}" X2="${tile.x + context.offsetX}" Y2="${tile.y + context.offsetY}" Locked="True" ID="${doorID}" />` + context.newline;
                         }
                     }
                     break;
@@ -222,11 +266,11 @@ let exporter = function() {
 
         // Effects
         switch (context.effect) {
-            case 1:
+            case EFFECT_TYPES.EFFECT_TYPE_COLD:
                 context.output += context.padding +
                     `<Effect Type="Cold" />` + context.newline;
                 break;
-            case 2:
+            case EFFECT_TYPES.EFFECT_TYPE_HEAT:
                 context.output += context.padding +
                     `<Effect Type="Heat" />` + context.newline;
                 break;
@@ -263,10 +307,12 @@ let exporter = function() {
             widthScale: widthScale,
             heightScale: heightScale,
             effect: effect,
-            data: []
+            data: [],
+            parameters: []
         };
         for (let tile of tiles) {
             saveData.data.push(tile.tile_id);
+            saveData.parameters.push({ id: tile.id, parameters: tile.parameters });
         }
         return JSON.stringify(saveData);
     };

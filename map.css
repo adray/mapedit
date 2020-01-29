@@ -104,3 +104,13 @@ textarea.export
     left: 37%;
     background-color: cornflowerblue;
 }
+
+.parametersWindow
+{
+    position: fixed;
+    width: 25%;
+    height: 40%;
+    bottom: 37%;
+    left: 37%;
+    background-color: cornflowerblue;
+}
