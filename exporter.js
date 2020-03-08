@@ -107,6 +107,7 @@ let exporter = function() {
                 tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_DOOR4] ];
             let direction = tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_DIRECTION] || "Up";
             let elite = tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_ELITE] || false;
+            let cloak = tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_CLOAK] || false;
 
             switch (tile.type) {
                 case "start":
@@ -129,6 +130,9 @@ let exporter = function() {
                             `<AI X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}" OnSight="Trigger_Fight"`;
                         if (elite) {
                             context.output += ` Aura="True"`;
+                        }
+                        if (cloak) {
+                            context.output += ` Cloak="True"`;
                         }
                         context.output += `>` + context.newline;
                         context.indent();
