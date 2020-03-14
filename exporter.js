@@ -108,6 +108,7 @@ let exporter = function() {
             let direction = tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_DIRECTION] || "Up";
             let elite = tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_ELITE] || false;
             let cloak = tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_CLOAK] || false;
+            let rarity = tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_RARITY] || CHEST_RARITY.CHEST_RARITY_COMMON;
 
             switch (tile.type) {
                 case "start":
@@ -263,6 +264,13 @@ let exporter = function() {
                         context.output += context.padding + 
                             `<IceSpike X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}" />` +
                             context.newline;
+                    }
+                    break;
+                case "chest":
+                    {
+                        context.output += context.padding +
+                            `<Chest X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}" Rarity="${rarity}" />`
+                             + context.newline;
                     }
                     break;
             }

@@ -52,6 +52,13 @@ button.tile#icespike
     background-color: white;
 }
 
+button.tile#chest
+{
+    text-align: center;
+    font-size: 20px;
+    background-color: white;
+}
+
 button.tile#terminal
 {
     text-align: center;

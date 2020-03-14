@@ -236,6 +236,23 @@ Vue.component('editor', {
                         id: TILE_TYPES.TILE_ICESPIKE,
                         type: "icespike",
                         value: "S"
+                    },
+                    {
+                        id: TILE_TYPES.TILE_CHEST,
+                        type: "chest",
+                        value: "C",
+                        parameters: [
+                            {
+                                id: PARAMETER_TYPE.PARAMETER_TYPE_RARITY,
+                                text: "Rarity",
+                                control:PARAMETERS.PARAMETER_DROPDOWN,
+                                values: [CHEST_RARITY.CHEST_RARITY_COMMON, CHEST_RARITY.CHEST_RARITY_RARE]
+                            }, 
+                            {
+                                id: PARAMETER_TYPE.PARAMETER_TYPE_HIDDEN,
+                                text:"Hidden",
+                                control:PARAMETERS.PARAMETER_CHECKBOX
+                             }  ]
                     }
                 ];
             },
