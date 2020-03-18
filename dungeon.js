@@ -108,9 +108,15 @@ Vue.component('editor', {
             exportDungeon: function() {
                 this.exportedData = "";
 
-                for(let tile of this.tiles) {
-                    //  TODO: need to export each map per floor
+                const newline = "\r\n";
+                const indent = "    ";
 
+                this.exportedData += "<Dungeon" + newline +
+                    indent + `ObjectTileSet="Debug"` + newline +
+                    indent + `RoomTileSet="Dungeon"` + newline +
+                    indent + `WallTileSet="Tomb">` + newline;
+
+                for(let tile of this.tiles) {
                     for (let map of tile.maps) {
                         let mapData = storage.getMapData(map);
                         if (mapData != undefined) { // can be null
@@ -133,12 +139,16 @@ Vue.component('editor', {
                                 }
                             }
 
+                            // TODO: pass indent level into export map
                             this.exportedData +=
+                                indent +
                                 exporter.exportMap(grid, mapInfo.widthScale, mapInfo.heightScale, map.effect || 0) +
-                                "\r\n";
+                                newline;
                         }
                     }
                 }
+
+                this.exportedData += "</Dungeon>" + newline;
             },
             createGrid: function(width, height) {
                 let tiles = [];
