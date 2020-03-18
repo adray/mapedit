@@ -1,0 +1,30 @@
+
+div.tile
+{
+    width: 400px;
+    height: 50px;
+    border: black 2px solid unset;
+    background-color: gray;
+}
+
+div.editorGrid
+{
+    display: grid;
+    grid-template-columns: repeat(1, 400px);
+}
+
+textarea.export
+{
+    width: 400px;
+    height: 200px;
+}
+
+.loadMapWindow
+{
+    position: fixed;
+    width: 25%;
+    height: 40%;
+    bottom: 37%;
+    left: 37%;
+    background-color: cornflowerblue;
+}
