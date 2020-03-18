@@ -2,7 +2,7 @@
 
 Vue.component('mapRow', {
     props: [ 'name' ],
-    template: `<div>{{name}}<input type="checkbox" v-model="selected" /></div>`,
+    template: `<span>{{name}}<input type="checkbox" v-model="selected" /></span>`,
     data: function() {
         return {
             selected: false
@@ -18,8 +18,10 @@ Vue.component('mapRow', {
 Vue.component('loadMap', {
     template: '<div class="loadMapWindow">\
             <mapRow v-for="map in getMaps" v-bind:key="map" v-bind:name="map" v-on:parameterChanged="parameterChanged" />\
-            <button v-on:click="okMenu">Ok</button>\
-            <button v-on:click="exitMenu">Exit</button>\
+            <div>\
+                <button v-on:click="okMenu">Ok</button>\
+                <button v-on:click="exitMenu">Exit</button>\
+            </div>\
         </div>',
     data: function() {
         return {
