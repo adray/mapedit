@@ -55,6 +55,26 @@ let palette = function() {
                         id: PARAMETER_TYPE.PARAMETER_TYPE_CLOAK,
                         text:"Cloak",
                         control:PARAMETERS.PARAMETER_CHECKBOX
+                    },
+                    {
+                        id: PARAMETER_TYPE.PARAMETER_TYPE_ENEMY1,
+                        text:"Enemy1",
+                        control:PARAMETERS.PARAMETER_TEXTBOX
+                    },
+                    {
+                        id: PARAMETER_TYPE.PARAMETER_TYPE_ENEMY2,
+                        text:"Enemy2",
+                        control:PARAMETERS.PARAMETER_TEXTBOX
+                    },
+                    {
+                        id: PARAMETER_TYPE.PARAMETER_TYPE_ENEMY3,
+                        text:"Enemy3",
+                        control:PARAMETERS.PARAMETER_TEXTBOX
+                    },
+                    {
+                        id: PARAMETER_TYPE.PARAMETER_TYPE_ENEMY4,
+                        text:"Enemy4",
+                        control:PARAMETERS.PARAMETER_TEXTBOX
                     } ]
                 },
                 {

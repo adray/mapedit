@@ -109,6 +109,10 @@ let exporter = function() {
             let elite = tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_ELITE] || false;
             let cloak = tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_CLOAK] || false;
             let rarity = tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_RARITY] || CHEST_RARITY.CHEST_RARITY_COMMON;
+            let enemies = [ tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_ENEMY1],
+                tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_ENEMY2],
+                tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_ENEMY3],
+                tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_ENEMY4] ];
 
             switch (tile.type) {
                 case "start":
@@ -129,10 +133,11 @@ let exporter = function() {
                     break;
                 case "enemy":
                     {
+                        let trigger = `Trigger_Fight_${context.floorId}_${context.enemies.length+1}`;
                         let dirX = directionX[direction];
                         let dirY = directionY[direction];
                         context.output += context.padding +
-                            `<AI X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}" OnSight="Trigger_Fight"`;
+                            `<AI X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}" OnSight="${trigger}"`;
                         if (elite) {
                             context.output += ` Aura="True"`;
                         }
@@ -145,6 +150,8 @@ let exporter = function() {
                             `<Direction X="${dirX}" Y="${dirY}" />` + context.newline;
                         context.unindent();
                         context.output += context.padding + `</AI>` + context.newline;
+
+                        context.enemies.push({ enemies: enemies, trigger: trigger});
                     }
                     break;
                 case "terminal":
@@ -321,6 +328,33 @@ let exporter = function() {
         }
     }
 
+    function writeEnemies(context) {
+        for (let enemy of context.enemies) {
+            context.output += context.padding + `<Trigger>` + context.newline;
+            context.indent();
+            context.output += context.padding + `<Conditions>` + context.newline;
+            context.indent();
+            context.output += context.padding + `<Condition Trigger="${enemy.trigger}" />` + context.newline;
+            context.unindent();
+            context.output += context.padding + `</Conditions>` + context.newline;
+            context.output += context.padding + `<Action>` + context.newline;
+            context.indent();
+            context.output += context.padding +  `<Fight>` + context.newline;
+            context.indent();
+            for (let enemyId of enemy.enemies) {
+                if (enemyId !== undefined) {
+                    context.output += context.padding + `<Enemy Type="${enemyId}" />` + context.newline;
+                }
+            }
+            context.unindent();
+            context.output += context.padding + `</Fight>` + context.newline;
+            context.unindent();
+            context.output += context.padding + `</Action>` + context.newline;
+            context.unindent();
+            context.output += context.padding + `</Trigger>` + context.newline;
+        }
+    }
+
     let exportMap = function(tiles, width, height, effect,
         floorId="Floor", floorTitle="F1", nextFloorTitle="", initialPadding="", isBaseFloor=true) {
         let context = {
@@ -337,6 +371,7 @@ let exporter = function() {
             floorTitle: floorTitle,
             nextFloorTitle: nextFloorTitle,
             startPoints: [],
+            enemies: [],
             indent: function() {
                 this.padding += "    ";
             },
@@ -354,6 +389,7 @@ let exporter = function() {
         } else {
             writeStartTriggers(context);
         }
+        writeEnemies(context);
         return context.output;
     };
 
