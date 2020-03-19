@@ -54,9 +54,11 @@ Vue.component('tile', {
     props: [ 'tile' ],
     template: '\
         <div class="tile">\
-            Floor:<input type="textbox"></input>\
+            Floor:<input type="textbox" v-model="tile.floorTitle"></input>\
             <button v-on:click="find">Find...</button>\
-            <div v-for="map in tile.maps" v-bind:key="map">{{map}}</div> \
+            <div>\
+                <span v-for="map in tile.maps" v-bind:key="map">{{map}}</span>\
+            <div>\
         </div>',
     methods: {
         find: function() {
@@ -88,7 +90,9 @@ Vue.component('editor', {
                 for (let i = 0; i < this.gridHeight; i++) {
                     this.tiles.push({
                         id: i,
-                        maps: []
+                        maps: [],
+                        floorTitle: "F" + (i+1),
+                        floorId: "Floor" + (i+1)
                     });
                 }
             },
@@ -116,7 +120,10 @@ Vue.component('editor', {
                     indent + `RoomTileSet="Dungeon"` + newline +
                     indent + `WallTileSet="Tomb">` + newline;
 
-                for(let tile of this.tiles) {
+                for(let floorIndex = 0; floorIndex < this.tiles.length; floorIndex++){
+                    let tile = this.tiles[floorIndex];
+                    let hasNext = floorIndex + 1 < this.tiles.length;
+                    let mapIndex = 1;
                     for (let map of tile.maps) {
                         let mapData = storage.getMapData(map);
                         if (mapData != undefined) { // can be null
@@ -139,12 +146,20 @@ Vue.component('editor', {
                                 }
                             }
 
-                            // TODO: pass indent level into export map
                             this.exportedData +=
-                                indent +
-                                exporter.exportMap(grid, mapInfo.widthScale, mapInfo.heightScale, map.effect || 0) +
+                                exporter.exportMap(grid,
+                                    mapInfo.widthScale,
+                                    mapInfo.heightScale,
+                                    map.effect || 0,
+                                    tile.floorId + "-" + mapIndex,
+                                    tile.floorTitle,
+                                    hasNext ? this.tiles[floorIndex+1].floorTitle : "",
+                                    indent,
+                                    floorIndex === 0) +
                                 newline;
                         }
+
+                        mapIndex++;
                     }
                 }
 

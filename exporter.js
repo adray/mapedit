@@ -3,13 +3,13 @@
 let exporter = function() {
 
     function writeHeader(context) {
-        context.output += context.padding + `<Floor Value="Floor" Name="F1">${context.newline}`;
+        context.output += context.padding + `<Floor Value="${context.floorId}" Name="${context.floorTitle}">${context.newline}`;
         context.indent();
     }
 
     function writeFooter(context) {
         context.unindent();
-        context.output += context.padding + `</Floor>`;
+        context.output += context.padding + `</Floor>` + context.newline;
     }
 
     function writeBody(context) {
@@ -114,10 +114,14 @@ let exporter = function() {
                 case "start":
                     context.output += context.padding +
                         `<!-- Start: [${tile.x+context.offsetX}, ${tile.y+context.offsetY}] -->` + context.newline;
+                    context.startPoints.push({
+                        x: tile.x+context.offsetX,
+                        y: tile.y+context.offsetY
+                    });
                     break;
                 case "end":
                     context.output += context.padding +
-                        `<Exit X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}" OnEnter="Trigger" />` + context.newline;
+                        `<Exit X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}" OnEnter="Trigger_MoveTo${context.nextFloorTitle}" />` + context.newline;
                     break;
                 case "hole":
                     context.output += context.padding +
@@ -286,20 +290,53 @@ let exporter = function() {
                 context.output += context.padding +
                     `<Effect Type="Heat" />` + context.newline;
                 break;
+        }        
+    }
+
+    function writeStartTriggers(context) {
+        // Start Triggers
+        for (let start of context.startPoints) {
+            context.output += context.padding + `<Trigger>` + context.newline;
+            context.indent();
+            context.output += context.padding + `<Conditions>` + context.newline;
+            context.indent();
+            context.output += context.padding + `<Condition Trigger="Trigger_MoveTo${context.floorTitle}" />` + context.newline;
+            context.output += context.padding + `<Condition Trigger="Trigger_${context.floorId}" />` + context.newline;
+            context.unindent();
+            context.output += context.padding + `</Conditions>` + context.newline;
+            context.output += context.padding + `<Action Repeat="True">` + context.newline;
+            context.indent(); 
+            context.output += context.padding + `<MoveTo X="${start.x}" Y="${start.y}" />` + context.newline;
+            context.output += context.padding + `<SwapFloor Value="${context.floorId}" />` + context.newline;
+            context.unindent();
+            context.output += context.padding + `</Action>` + context.newline;
+            context.unindent();
+            context.output += context.padding + `</Trigger>` + context.newline;
         }
     }
 
-    let exportMap = function(tiles, width, height, effect) {
+    function writeStartBlock(context) {
+        for (let start of context.startPoints) {
+            context.output += context.padding + `<Start X="${start.x}" Y="${start.y}" Floor="${context.floorId}" />` + context.newline;
+        }
+    }
+
+    let exportMap = function(tiles, width, height, effect,
+        floorId="Floor", floorTitle="F1", nextFloorTitle="", initialPadding="", isBaseFloor=true) {
         let context = {
             tiles: tiles,
             output: "",
-            padding: "",
+            padding: initialPadding,
             newline: "\r\n",
             width: width,
             height: height,
             offsetX: 4,
             offsetY: 5,
             effect: effect,
+            floorId: floorId,
+            floorTitle: floorTitle,
+            nextFloorTitle: nextFloorTitle,
+            startPoints: [],
             indent: function() {
                 this.padding += "    ";
             },
@@ -311,6 +348,12 @@ let exporter = function() {
         writeHeader(context);
         writeBody(context);
         writeFooter(context);
+
+        if (isBaseFloor) {
+            writeStartBlock(context);
+        } else {
+            writeStartTriggers(context);
+        }
         return context.output;
     };
 
