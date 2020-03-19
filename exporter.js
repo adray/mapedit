@@ -113,6 +113,7 @@ let exporter = function() {
                 tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_ENEMY2],
                 tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_ENEMY3],
                 tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_ENEMY4] ];
+            let win = tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_WIN] || false;
 
             switch (tile.type) {
                 case "start":
@@ -151,7 +152,7 @@ let exporter = function() {
                         context.unindent();
                         context.output += context.padding + `</AI>` + context.newline;
 
-                        context.enemies.push({ enemies: enemies, trigger: trigger});
+                        context.enemies.push({ enemies: enemies, trigger: trigger, win: win});
                     }
                     break;
                 case "terminal":
@@ -159,7 +160,7 @@ let exporter = function() {
                         let doorData = "";
                         context.indent();
                         for (let door of doors) {
-                            if (door !== undefined) {
+                            if (door != undefined) { // can be null?
                                 doorData += context.padding + `<Door Text="Door" ID="${door}" Locked="True" />` + context.newline;
                             }
                         }
@@ -328,6 +329,23 @@ let exporter = function() {
         }
     }
 
+    function writeWinTrigger(context) {
+        context.output += context.padding + `<Trigger>` + context.newline;
+        context.indent();
+        context.output += context.padding + `<Conditions>` + context.newline;
+        context.indent();
+        context.output += context.padding + `<Condition Trigger="Trigger_Complete" />` + context.newline;
+        context.unindent();
+        context.output += context.padding + `</Conditions>` + context.newline;
+        context.output += context.padding + `<Action>` + context.newline;
+        context.indent();
+        context.output += context.padding + `<Event Name="${context.dungeonName}_Complete" />` + context.newline;
+        context.unindent();
+        context.output += context.padding + `</Action>` + context.newline;
+        context.unindent();
+        context.output += context.padding + `</Trigger>` + context.newline;
+    }
+
     function writeEnemies(context) {
         for (let enemy of context.enemies) {
             context.output += context.padding + `<Trigger>` + context.newline;
@@ -337,12 +355,16 @@ let exporter = function() {
             context.output += context.padding + `<Condition Trigger="${enemy.trigger}" />` + context.newline;
             context.unindent();
             context.output += context.padding + `</Conditions>` + context.newline;
-            context.output += context.padding + `<Action>` + context.newline;
+            if (enemy.win) {
+                context.output += context.padding + `<Action OnWin="Trigger_Complete">` + context.newline;
+            } else {
+                context.output += context.padding + `<Action>` + context.newline;
+            }
             context.indent();
             context.output += context.padding +  `<Fight>` + context.newline;
             context.indent();
             for (let enemyId of enemy.enemies) {
-                if (enemyId !== undefined) {
+                if (enemyId != undefined) { // enemyId can be null?
                     context.output += context.padding + `<Enemy Type="${enemyId}" />` + context.newline;
                 }
             }
@@ -352,11 +374,16 @@ let exporter = function() {
             context.output += context.padding + `</Action>` + context.newline;
             context.unindent();
             context.output += context.padding + `</Trigger>` + context.newline;
+
+            if (enemy.win) {
+                writeWinTrigger(context);
+            }
         }
     }
 
     let exportMap = function(tiles, width, height, effect,
-        floorId="Floor", floorTitle="F1", nextFloorTitle="", initialPadding="", isBaseFloor=true) {
+        floorId="Floor", floorTitle="F1", nextFloorTitle="", initialPadding="", isBaseFloor=true,
+        dungeonName="Dungeon") {
         let context = {
             tiles: tiles,
             output: "",
@@ -370,6 +397,7 @@ let exporter = function() {
             floorId: floorId,
             floorTitle: floorTitle,
             nextFloorTitle: nextFloorTitle,
+            dungeonName: dungeonName,
             startPoints: [],
             enemies: [],
             indent: function() {

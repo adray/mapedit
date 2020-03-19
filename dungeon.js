@@ -80,7 +80,8 @@ Vue.component('editor', {
                 showLoadMap: false,
                 loadMapCallback: undefined,
                 exportedData: "",
-                palette: palette.createPallete()
+                palette: palette.createPallete(),
+                dungeonName: ""
             };
         },
         methods: {
@@ -155,7 +156,8 @@ Vue.component('editor', {
                                     tile.floorTitle,
                                     hasNext ? this.tiles[floorIndex+1].floorTitle : "",
                                     indent,
-                                    floorIndex === 0) +
+                                    floorIndex === 0,
+                                    this.dungeonName) +
                                 newline;
                         }
 
@@ -199,7 +201,8 @@ Vue.component('editor', {
             <select name="height" ref="height" v-on:change="resize">\
                 <option v-for="size in height" v-bind:value="size">{{size}}</option>\
             </select>\
-            <button name="export" v-on:click="exportDungeon">Export</button>
+            Name:<input type="text" v-model="dungeonName" />\
+            <button name="export" v-on:click="exportDungeon">Export</button>\
             <div>\
                 <textarea class="export">{{ exportedData }}</textarea>\
             </div>\

@@ -75,6 +75,11 @@ let palette = function() {
                         id: PARAMETER_TYPE.PARAMETER_TYPE_ENEMY4,
                         text:"Enemy4",
                         control:PARAMETERS.PARAMETER_TEXTBOX
+                    },
+                    {
+                        id: PARAMETER_TYPE.PARAMETER_TYPE_WIN,
+                        text:"Win",
+                        control:PARAMETERS.PARAMETER_CHECKBOX
                     } ]
                 },
                 {
