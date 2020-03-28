@@ -34,7 +34,18 @@ let palette = function() {
                 {
                     id: TILE_TYPES.TILE_HOLE,
                     type: "hole",
-                    value: ""
+                    value: "",
+                    parameters: [ {
+                        id: PARAMETER_TYPE.PARAMETER_TYPE_ID,
+                        text: "ID",
+                        control:PARAMETERS.PARAMETER_TEXTBOX
+                    },
+                    {
+                        id: PARAMETER_TYPE.PARAMETER_TYPE_HOLE_TYPE,
+                        text: "Type",
+                        control:PARAMETERS.PARAMETER_DROPDOWN,
+                        values:[HOLE_TYPE.HOLE_TYPE_NONE,HOLE_TYPE.HOLE_TYPE_BRIDGE_START_ENABLED,HOLE_TYPE.HOLE_TYPE_BRIDGE_START_DISABLED,HOLE_TYPE.HOLE_TYPE_BRIDGE_END]
+                    } ]
                 },
                 {
                     id: TILE_TYPES.TILE_ENEMY,

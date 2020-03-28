@@ -114,6 +114,7 @@ let exporter = function() {
                 tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_ENEMY3],
                 tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_ENEMY4] ];
             let win = tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_WIN] || false;
+            let holeType = tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_HOLE_TYPE] || HOLE_TYPE.HOLE_TYPE_NONE;
 
             switch (tile.type) {
                 case "start":
@@ -129,8 +130,111 @@ let exporter = function() {
                         `<Exit X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}" OnEnter="Trigger_MoveTo${context.nextFloorTitle}" />` + context.newline;
                     break;
                 case "hole":
-                    context.output += context.padding +
-                        `<Room X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}" Type="Hole" />` + context.newline;
+                    {
+                        context.output += context.padding +
+                            `<Room X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}" Type="Hole" />` + context.newline;
+
+                        if (id !== undefined && (holeType === HOLE_TYPE.HOLE_TYPE_BRIDGE_START_ENABLED || holeType === HOLE_TYPE.HOLE_TYPE_BRIDGE_START_DISABLED)) {
+                            const HoleVert = "Vertical";
+                            const HoleHori = "Horizontal";
+                            let endX = tile.x;
+                            let endY = tile.y;
+                            let holeDir = undefined;
+
+                            for (let x = tile.x-1; x >= 0; x--) {
+                                let index = getIndex(x, tile.y);
+                                let nextTile = grid[index];
+                                if (nextTile !== undefined) {
+                                    let nextHoleType = nextTile.item.parameters[PARAMETER_TYPE.PARAMETER_TYPE_HOLE_TYPE] || HOLE_TYPE.HOLE_TYPE_NONE;
+                                    let nextID = nextTile.item.parameters[PARAMETER_TYPE.PARAMETER_TYPE_ID];
+                                    if (nextTile.item.type === "hole" && nextHoleType === HOLE_TYPE.HOLE_TYPE_BRIDGE_END && nextID === id) {
+                                        holeDir = HoleHori;
+                                        endX = x;
+                                        break;
+                                    }
+                                }
+                                
+                                if (nextTile === undefined || nextTile.item.type !== "hole") {
+                                    break;
+                                }
+                            }
+
+                            if (holeDir === undefined) {
+                                for (let x = tile.x+1; x < context.width; x++) {
+                                    let index = getIndex(x, tile.y);
+                                    let nextTile = grid[index];
+                                    if (nextTile !== undefined) {
+                                        let nextHoleType = nextTile.item.parameters[PARAMETER_TYPE.PARAMETER_TYPE_HOLE_TYPE] || HOLE_TYPE.HOLE_TYPE_NONE;
+                                        let nextID = nextTile.item.parameters[PARAMETER_TYPE.PARAMETER_TYPE_ID];
+                                        if (nextTile.item.type === "hole" && nextHoleType === HOLE_TYPE.HOLE_TYPE_BRIDGE_END && nextID === id) {
+                                            holeDir = HoleHori;
+                                            endX = x;
+                                            break;
+                                        }
+                                    }
+                                    
+                                    if (nextTile === undefined || nextTile.item.type !== "hole") {
+                                        break;
+                                    }
+                                }
+                            }
+
+                            for (let y = tile.y-1; y >= 0; y--) {
+                                let index = getIndex(tile.x, y);
+                                let nextTile = grid[index];
+                                if (nextTile !== undefined) {
+                                    let nextHoleType = nextTile.item.parameters[PARAMETER_TYPE.PARAMETER_TYPE_HOLE_TYPE] || HOLE_TYPE.HOLE_TYPE_NONE;
+                                    let nextID = nextTile.item.parameters[PARAMETER_TYPE.PARAMETER_TYPE_ID];
+                                    if (nextTile.item.type === "hole" && nextHoleType === HOLE_TYPE.HOLE_TYPE_BRIDGE_END && nextID === id) {
+                                        holeDir = HoleVert;
+                                        endY = y;
+                                        break;
+                                    }
+                                }
+                                
+                                if (nextTile === undefined || nextTile.item.type !== "hole") {
+                                    break;
+                                }
+                            }
+
+                            for (let y = tile.y+1; y < context.height; y++) {
+                                let index = getIndex(tile.x, y);
+                                let nextTile = grid[index];
+                                if (nextTile !== undefined) {
+                                    let nextHoleType = nextTile.item.parameters[PARAMETER_TYPE.PARAMETER_TYPE_HOLE_TYPE] || HOLE_TYPE.HOLE_TYPE_NONE;
+                                    let nextID = nextTile.item.parameters[PARAMETER_TYPE.PARAMETER_TYPE_ID];
+                                    if (nextTile.item.type === "hole" && nextHoleType === HOLE_TYPE.HOLE_TYPE_BRIDGE_END && nextID === id) {
+                                        holeDir = HoleVert;
+                                        endY = y;
+                                        break;
+                                    }
+                                }
+                                
+                                if (nextTile === undefined || nextTile.item.type !== "hole") {
+                                    break;
+                                }
+                            }
+
+                            if (holeDir !== undefined) {
+                                let enabled = holeType === HOLE_TYPE.HOLE_TYPE_BRIDGE_START_ENABLED ? "True" : "False";
+                                if (holeDir === HoleHori) {
+                                    context.output += context.padding + `<Bridge Y="${context.offsetY + tile.y}" Orientation="${HoleHori}" Enabled="${enabled}" ID="${id}">` + context.newline;
+                                    context.indent();
+                                    context.output += context.padding + `<Start X="${context.offsetX + tile.x}" />` + context.newline;
+                                    context.output += context.padding + `<End X="${context.offsetX + endX}" />` + context.newline;
+                                    context.unindent();
+                                    context.output += context.padding + `</Bridge>` + context.newline;
+                                } else if (holeDir === HoleVert) {
+                                    context.output += context.padding + `<Bridge X="${context.offsetX + tile.x}" Orientation="${HoleVert}" Enabled="${enabled}" ID="${id}">` + context.newline;
+                                    context.indent();
+                                    context.output += context.padding + `<Start Y="${context.offsetY + tile.y}" />` + context.newline;
+                                    context.output += context.padding + `<End Y="${context.offsetY + endY}" />` + context.newline;
+                                    context.unindent();
+                                    context.output += context.padding + `</Bridge>` + context.newline;
+                                }
+                            }
+                        }
+                    }
                     break;
                 case "enemy":
                     {
