@@ -113,6 +113,14 @@ let palette = function() {
                         {
                             id: PARAMETER_TYPE.PARAMETER_TYPE_DOOR4,
                             text:"Door4", control:PARAMETERS.PARAMETER_TEXTBOX
+                        },
+                        {
+                            id: PARAMETER_TYPE.PARAMETER_TYPE_BRIDGE1,
+                            text:"Bridge1", control:PARAMETERS.PARAMETER_TEXTBOX
+                        },
+                        {
+                            id: PARAMETER_TYPE.PARAMETER_TYPE_BRIDGE2,
+                            text:"Bridge2", control:PARAMETERS.PARAMETER_TEXTBOX
                         } ]
                 },
                 {

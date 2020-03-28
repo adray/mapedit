@@ -115,6 +115,10 @@ let exporter = function() {
                 tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_ENEMY4] ];
             let win = tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_WIN] || false;
             let holeType = tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_HOLE_TYPE] || HOLE_TYPE.HOLE_TYPE_NONE;
+            let bridges = [
+                tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_BRIDGE1],
+                tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_BRIDGE2]
+            ];
 
             switch (tile.type) {
                 case "start":
@@ -270,13 +274,31 @@ let exporter = function() {
                         }
                         context.unindent();
 
-                        if (doorData === "") {
+                        let bridgeData = "";
+                        context.indent();
+                        for (let bridge of bridges) {
+                            if (bridge != undefined) { // can be null?
+                                if (bridgeData === "") {
+                                    bridgeData += context.padding + `<Bridges>` + context.newline;
+                                    context.indent();
+                                }
+                                bridgeData += context.padding + `<Bridge ID="${bridge}" />` + context.newline;
+                            }
+                        }
+
+                        if (bridgeData !== "") {
+                            context.unindent();
+                            bridgeData += context.padding + `</Bridges>` + context.newline;
+                        }
+                        context.unindent();
+
+                        if (doorData === "" && bridgeData === "") {
                             context.output += context.padding +
                                `<Terminal X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}" />` + context.newline;
                         } else {
                             context.output += context.padding +
                                 `<Terminal X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}">` + context.newline
-                                + doorData + context.padding + "</Terminal>" + context.newline;
+                                + doorData + bridgeData + context.padding + "</Terminal>" + context.newline;
                         }
                     }
                     break;
