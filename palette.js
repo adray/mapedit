@@ -170,6 +170,17 @@ let palette = function() {
                             text:"Hidden",
                             control:PARAMETERS.PARAMETER_CHECKBOX
                          }  ]
+                },
+                {
+                    id: TILE_TYPES.TILE_FOUNTAIN,
+                    type: "fountain",
+                    value: "F",
+                    parameters: [
+                        {
+                            id: PARAMETER_TYPE.PARAMETER_TYPE_HIDDEN,
+                            text:"Hidden",
+                            control:PARAMETERS.PARAMETER_CHECKBOX
+                         }  ]
                 }
             ];
         }

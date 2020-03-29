@@ -423,6 +423,12 @@ let exporter = function() {
                              + context.newline;
                     }
                     break;
+                case "fountain":
+                    {
+                        context.output += context.padding +
+                            `<Fountain X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}" />` + context.newline;
+                    }
+                    break;
             }
         }
 
