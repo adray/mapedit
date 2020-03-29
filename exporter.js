@@ -32,9 +32,10 @@ let exporter = function() {
             return tile.type === "icespike";
         }
 
-        function is2x2Allowed(tile) {
+        function is2x2Allowed(tile, parentHidden) {
             if (tile !== undefined) {
-                return !tile.used && isRoom(tile.item) && !isSingleTileRoom(tile.item);
+                let hidden = tile.item.parameters[PARAMETER_TYPE.PARAMETER_TYPE_HIDDEN] || false;
+                return !tile.used && isRoom(tile.item) && !isSingleTileRoom(tile.item) && hidden === parentHidden;
             }
             return false;
         }
@@ -52,18 +53,25 @@ let exporter = function() {
             if (grid[index] === undefined && isRoomTile && !isSingleTileRoom(tile)) {
                 // NOTE: This makes an assumption:
                 // tile.y >= previous.y AND (tile.y > previous.y OR tile.x > previous.x)
+                let hidden = wrapper.item.parameters[PARAMETER_TYPE.PARAMETER_TYPE_HIDDEN] || false;
 
                 if (wrapper.x > 0 && wrapper.y > 0) {
                     let left = getIndex((wrapper.x - 1), wrapper.y);
                     let up = getIndex(wrapper.x, wrapper.y - 1);
                     let diagonal = getIndex((wrapper.x - 1), wrapper.y - 1);
-                    if (is2x2Allowed(grid[left]) &&
-                        is2x2Allowed(grid[up]) &&
-                        is2x2Allowed(grid[diagonal])) {
+                    if (is2x2Allowed(grid[left], hidden) &&
+                        is2x2Allowed(grid[up], hidden) &&
+                        is2x2Allowed(grid[diagonal], hidden)) {
                         // We found a 2x2 room
-                        context.output += context.padding +
-                            `<Room X="${grid[diagonal].x + context.offsetX}" Y="${grid[diagonal].y + context.offsetY}" Type="Small" />` + 
-                            context.newline;
+                        if (hidden === true) {
+                            context.output += context.padding +
+                                `<Room X="${grid[diagonal].x + context.offsetX}" Y="${grid[diagonal].y + context.offsetY}" Type="Small" Hidden="True" />` + 
+                                context.newline;
+                        } else {                            
+                            context.output += context.padding +
+                                `<Room X="${grid[diagonal].x + context.offsetX}" Y="${grid[diagonal].y + context.offsetY}" Type="Small" />` + 
+                                context.newline;
+                        }
                         grid[up].used = true;
                         grid[left].used = true;
                         grid[diagonal].used = true;
@@ -83,7 +91,7 @@ let exporter = function() {
         for (let tile of grid) {
             if (tile !== undefined && !tile.used) {
                 // We found a 1x1 room
-                let hidden = tile.item.parameters[PARAMETER_TYPE.PARAMETER_TYPE_HIDDEN];
+                let hidden = tile.item.parameters[PARAMETER_TYPE.PARAMETER_TYPE_HIDDEN] || false;
                 context.output += context.padding +
                 `<Room X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}" Type="Corridor"`;
                 
