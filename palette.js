@@ -44,7 +44,12 @@ let palette = function() {
                         id: PARAMETER_TYPE.PARAMETER_TYPE_HOLE_TYPE,
                         text: "Type",
                         control:PARAMETERS.PARAMETER_DROPDOWN,
-                        values:[HOLE_TYPE.HOLE_TYPE_NONE,HOLE_TYPE.HOLE_TYPE_BRIDGE_START_ENABLED,HOLE_TYPE.HOLE_TYPE_BRIDGE_START_DISABLED,HOLE_TYPE.HOLE_TYPE_BRIDGE_END]
+                        values:[HOLE_TYPE.HOLE_TYPE_NONE,
+                            HOLE_TYPE.HOLE_TYPE_BRIDGE_START_ENABLED,
+                            HOLE_TYPE.HOLE_TYPE_BRIDGE_START_DISABLED,
+                            HOLE_TYPE.HOLE_TYPE_BRIDGE_END,
+                            HOLE_TYPE.HOLE_TYPE_BRIDGE_START_HIDDEN
+                        ]
                     } ]
                 },
                 {

@@ -138,7 +138,11 @@ let exporter = function() {
                         context.output += context.padding +
                             `<Room X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}" Type="Hole" />` + context.newline;
 
-                        if (id !== undefined && (holeType === HOLE_TYPE.HOLE_TYPE_BRIDGE_START_ENABLED || holeType === HOLE_TYPE.HOLE_TYPE_BRIDGE_START_DISABLED)) {
+                        if (id !== undefined &&
+                            (holeType === HOLE_TYPE.HOLE_TYPE_BRIDGE_START_ENABLED ||
+                            holeType === HOLE_TYPE.HOLE_TYPE_BRIDGE_START_DISABLED ||
+                            holeType === HOLE_TYPE.HOLE_TYPE_BRIDGE_START_HIDDEN)) {
+                            
                             const HoleVert = "Vertical";
                             const HoleHori = "Horizontal";
                             let endX = tile.x;
@@ -219,17 +223,25 @@ let exporter = function() {
                                 }
                             }
 
-                            if (holeDir !== undefined) {
-                                let enabled = holeType === HOLE_TYPE.HOLE_TYPE_BRIDGE_START_ENABLED ? "True" : "False";
+                            if (holeDir !== undefined) {                               
+                                let enabled = "False";
+                                let hidden = "False"
+                                if (holeType === HOLE_TYPE.HOLE_TYPE_BRIDGE_START_ENABLED) {
+                                    enabled = "True";
+                                }
+                                if (holeType === HOLE_TYPE.HOLE_TYPE_BRIDGE_START_HIDDEN) {
+                                    enabled = "True";
+                                    hidden = "True";
+                                }
                                 if (holeDir === HoleHori) {
-                                    context.output += context.padding + `<Bridge Y="${context.offsetY + tile.y}" Orientation="${HoleHori}" Enabled="${enabled}" ID="${id}">` + context.newline;
+                                    context.output += context.padding + `<Bridge Y="${context.offsetY + tile.y}" Orientation="${HoleHori}" Enabled="${enabled}" Hidden="${hidden}" ID="${id}">` + context.newline;
                                     context.indent();
                                     context.output += context.padding + `<Start X="${context.offsetX + tile.x}" />` + context.newline;
                                     context.output += context.padding + `<End X="${context.offsetX + endX}" />` + context.newline;
                                     context.unindent();
                                     context.output += context.padding + `</Bridge>` + context.newline;
                                 } else if (holeDir === HoleVert) {
-                                    context.output += context.padding + `<Bridge X="${context.offsetX + tile.x}" Orientation="${HoleVert}" Enabled="${enabled}" ID="${id}">` + context.newline;
+                                    context.output += context.padding + `<Bridge X="${context.offsetX + tile.x}" Orientation="${HoleVert}" Enabled="${enabled}" Hidden="${hidden}" ID="${id}">` + context.newline;
                                     context.indent();
                                     context.output += context.padding + `<Start Y="${context.offsetY + tile.y}" />` + context.newline;
                                     context.output += context.padding + `<End Y="${context.offsetY + endY}" />` + context.newline;

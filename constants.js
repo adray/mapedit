@@ -49,5 +49,6 @@ const HOLE_TYPE = {
     HOLE_TYPE_NONE: "None",
     HOLE_TYPE_BRIDGE_START_ENABLED: "Bridge Start (Enabled)",
     HOLE_TYPE_BRIDGE_START_DISABLED:"Bridge Start (Disabled)",
-    HOLE_TYPE_BRIDGE_END: "Bridge End"
+    HOLE_TYPE_BRIDGE_END: "Bridge End",
+    HOLE_TYPE_BRIDGE_START_HIDDEN: "Bridge Start (Hidden)"
 };
