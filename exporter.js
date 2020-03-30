@@ -245,15 +245,15 @@ let exporter = function() {
                                 if (holeDir === HoleHori) {
                                     context.output += context.padding + `<Bridge Y="${context.offsetY + tile.y}" Orientation="${HoleHori}" Enabled="${enabled}" Hidden="${hidden}" ID="${id}">` + context.newline;
                                     context.indent();
-                                    context.output += context.padding + `<Start X="${context.offsetX + tile.x}" />` + context.newline;
-                                    context.output += context.padding + `<End X="${context.offsetX + endX}" />` + context.newline;
+                                    context.output += context.padding + `<Start X="${context.offsetX + Math.min(tile.x, endX)}" />` + context.newline;
+                                    context.output += context.padding + `<End X="${context.offsetX + Math.max(tile.x, endX)}" />` + context.newline;
                                     context.unindent();
                                     context.output += context.padding + `</Bridge>` + context.newline;
                                 } else if (holeDir === HoleVert) {
                                     context.output += context.padding + `<Bridge X="${context.offsetX + tile.x}" Orientation="${HoleVert}" Enabled="${enabled}" Hidden="${hidden}" ID="${id}">` + context.newline;
                                     context.indent();
-                                    context.output += context.padding + `<Start Y="${context.offsetY + tile.y}" />` + context.newline;
-                                    context.output += context.padding + `<End Y="${context.offsetY + endY}" />` + context.newline;
+                                    context.output += context.padding + `<Start Y="${context.offsetY + Math.min(tile.y, endY)}" />` + context.newline;
+                                    context.output += context.padding + `<End Y="${context.offsetY + Math.max(tile.y, endY)}" />` + context.newline;
                                     context.unindent();
                                     context.output += context.padding + `</Bridge>` + context.newline;
                                 }
