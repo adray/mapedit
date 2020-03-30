@@ -289,7 +289,7 @@ let exporter = function() {
                         let doorData = "";
                         context.indent();
                         for (let door of doors) {
-                            if (door != undefined) { // can be null?
+                            if (door != undefined && door !== "") { // can be null?
                                 doorData += context.padding + `<Door Text="Door" ID="${door}" Locked="True" />` + context.newline;
                             }
                         }
@@ -298,7 +298,7 @@ let exporter = function() {
                         let bridgeData = "";
                         context.indent();
                         for (let bridge of bridges) {
-                            if (bridge != undefined) { // can be null?
+                            if (bridge != undefined && bridge !== "")  { // can be null?
                                 if (bridgeData === "") {
                                     bridgeData += context.padding + `<Bridges>` + context.newline;
                                     context.indent();

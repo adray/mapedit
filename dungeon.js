@@ -58,7 +58,7 @@ Vue.component('tile', {
             <button v-on:click="find">Find...</button>\
             <div>\
                 <span v-for="map in tile.maps" v-bind:key="map">{{map}}</span>\
-            <div>\
+            </div>\
         </div>',
     methods: {
         find: function() {
@@ -149,8 +149,8 @@ Vue.component('editor', {
 
                             this.exportedData +=
                                 exporter.exportMap(grid,
-                                    mapInfo.widthScale,
-                                    mapInfo.heightScale,
+                                    mapInfo.widthScale*7,
+                                    mapInfo.heightScale*6,
                                     map.effect || 0,
                                     tile.floorId + "-" + mapIndex,
                                     tile.floorTitle,
