@@ -127,6 +127,7 @@ let exporter = function() {
                 tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_BRIDGE1],
                 tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_BRIDGE2]
             ];
+            let mimic = tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_MIMIC] || false;
 
             switch (tile.type) {
                 case "start":
@@ -426,9 +427,17 @@ let exporter = function() {
                     break;
                 case "chest":
                     {
-                        context.output += context.padding +
-                            `<Chest X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}" Rarity="${rarity}" />`
-                             + context.newline;
+                        if (mimic) {
+                            let trigger = `Trigger_Fight_${context.floorId}_${context.enemies.length+1}`;                 
+                            context.output += context.padding +
+                                `<Chest X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}" Rarity="${rarity}" Mimic="True" OnClick="${trigger}" />`
+                                + context.newline;
+                            context.enemies.push({ enemies: enemies, trigger: trigger, win: false });
+                        } else {
+                            context.output += context.padding +
+                                `<Chest X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}" Rarity="${rarity}" />`
+                                + context.newline;
+                        }
                     }
                     break;
                 case "fountain":
