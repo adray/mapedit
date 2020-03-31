@@ -180,7 +180,7 @@ Vue.component('editor', {
                                 exporter.exportMap(grid,
                                     mapInfo.widthScale*7,
                                     mapInfo.heightScale*6,
-                                    map.effect || 0,
+                                    mapInfo.effect || 0,
                                     tile.floorId + "-" + mapIndex,
                                     tile.floorTitle,
                                     hasNext ? this.tiles[floorIndex+1].floorTitle : "",
