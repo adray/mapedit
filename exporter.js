@@ -516,13 +516,13 @@ let exporter = function() {
             context.output += context.padding + `<Condition Trigger="${enemy.trigger}" />` + context.newline;
             context.unindent();
             context.output += context.padding + `</Conditions>` + context.newline;
-            if (enemy.win) {
-                context.output += context.padding + `<Action OnWin="Trigger_Complete">` + context.newline;
-            } else {
-                context.output += context.padding + `<Action>` + context.newline;
-            }
+            context.output += context.padding + `<Action>` + context.newline;
             context.indent();
-            context.output += context.padding +  `<Fight>` + context.newline;
+            if (enemy.win) {
+                context.output += context.padding +  `<Fight OnWin="Trigger_Complete">` + context.newline;
+            } else {
+                context.output += context.padding +  `<Fight>` + context.newline;
+            }
             context.indent();
             for (let enemyId of enemy.enemies) {
                 if (enemyId != undefined) { // enemyId can be null?

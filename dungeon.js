@@ -50,6 +50,33 @@ Vue.component('loadMap', {
     }
 });
 
+Vue.component('dungeonRow', {
+    template: '<span><button v-on:click="$emit(`loadDungeon`, name)">{{name}}</button></span>',
+    props: [ "name" ]
+})
+
+Vue.component('loadDungeon', {
+    template: '<div class="loadDungeonWindow">\
+        <dungeonRow v-for="dungeon in getDungeons" v-bind:key="dungeon" v-bind:name="dungeon" v-on:loadDungeon="loadDungeon" />\
+        <div>\
+            <button v-on:click="exitMenu">Exit</button>\
+        </div>\
+    </div>',
+    computed: {
+        getDungeons: function() {
+            return storage.getDungeonList();
+        }
+    },
+    methods: {
+        loadDungeon: function(name) {
+            this.$emit("loadDungeon", name);
+        },
+        exitMenu: function() {
+            this.$emit("exitLoadDungeon");
+        }
+    }
+})
+
 Vue.component('tile', {
     props: [ 'tile' ],
     template: '\
@@ -78,6 +105,7 @@ Vue.component('editor', {
                 tiles: [],
                 height: [1,2,3,4,5,6,7,8,9,10],
                 showLoadMap: false,
+                showLoadDungeon: false,
                 loadMapCallback: undefined,
                 exportedData: "",
                 palette: palette.createPallete(),
@@ -100,6 +128,7 @@ Vue.component('editor', {
             showLoadMapMenu: function(callback) {
                 this.showLoadMap = true;
                 this.loadMapCallback = callback;
+                this.exitLoadDungeon();
             },
             exitLoadMap: function() {
                 this.showLoadMap = false;
@@ -187,6 +216,52 @@ Vue.component('editor', {
                 }
                 return tiles;
             },
+            saveDungeon: function() {
+                let floors = [];
+                for (let floor of this.tiles) {
+                    floors.push({
+                        id: floor.id,
+                        maps: Array.from(floor.maps),
+                        floorTitle: floor.floorTitle,
+                        floorId: floor.floorId
+                    });
+                }
+
+                let dungeonData = {
+                    numberOfFloors: this.gridHeight,
+                    floors: floors
+                };
+
+                storage.saveDungeonData(this.dungeonName, JSON.stringify(dungeonData));
+            },
+            showLoadDungeonMenu: function() {
+                this.showLoadDungeon = true;
+                this.exitLoadMap();
+            },
+            loadDungeon: function(dungeon) {
+                this.exitLoadDungeon();
+
+                let dungeonData = storage.getDungeonData(dungeon);
+                if (dungeonData != null) {
+                    let dungeonInfo = JSON.parse(dungeonData);
+
+                    this.dungeonName = dungeon;
+                    this.$refs.height.value = Number(dungeonInfo.numberOfFloors);
+                    this.resize();
+
+                    let index = 0;
+                    for (let floor of dungeonInfo.floors) {
+                        this.tiles[index].id = floor.id;
+                        this.tiles[index].floorIndex = floor.floorIndex;
+                        this.tiles[index].floorId = floor.floorId;
+                        this.tiles[index].maps = new Set(floor.maps);
+                        index++;
+                    }
+                }
+            },
+            exitLoadDungeon: function() {
+                this.showLoadDungeon = false;
+            }
         },
         template: `\
         <div>\
@@ -202,11 +277,14 @@ Vue.component('editor', {
                 <option v-for="size in height" v-bind:value="size">{{size}}</option>\
             </select>\
             Name:<input type="text" v-model="dungeonName" />\
+            <button name="save" v-on:click="saveDungeon">Save</button>\
+            <button name="load" v-on:click="showLoadDungeonMenu">Load</button>\
             <button name="export" v-on:click="exportDungeon">Export</button>\
             <div>\
                 <textarea class="export">{{ exportedData }}</textarea>\
             </div>\
             <loadMap v-if="showLoadMap" v-on:exitLoadMap="exitLoadMap" v-on:loadMap="loadMap($event)" />\
+            <loadDungeon v-if="showLoadDungeon" v-on:exitLoadDungeon="exitLoadDungeon" v-on:loadDungeon="loadDungeon($event)" />\
         </div>`
     });
 
