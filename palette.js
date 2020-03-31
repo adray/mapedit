@@ -96,6 +96,11 @@ let palette = function() {
                         id: PARAMETER_TYPE.PARAMETER_TYPE_WIN,
                         text:"Win",
                         control:PARAMETERS.PARAMETER_CHECKBOX
+                    },
+                    {
+                        id: PARAMETER_TYPE.PARAMETER_TYPE_HIDDEN,
+                        text:"Hidden",
+                        control:PARAMETERS.PARAMETER_CHECKBOX
                     } ]
                 },
                 {
