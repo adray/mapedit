@@ -290,8 +290,16 @@ let exporter = function() {
                         context.indent();
                         for (let door of doors) {
                             if (door != undefined && door !== "") { // can be null?
+                                if (doorData === "") {
+                                    doorData = context.padding + "<Doors>" + context.newline;
+                                    context.indent();
+                                }
                                 doorData += context.padding + `<Door Text="Door" ID="${door}" Locked="True" />` + context.newline;
                             }
+                        }
+                        if (doorData !== "") {
+                            context.unindent();
+                            doorData += context.padding + "</Doors>" + context.newline;
                         }
                         context.unindent();
 
