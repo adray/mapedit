@@ -131,6 +131,22 @@ let palette = function() {
                         {
                             id: PARAMETER_TYPE.PARAMETER_TYPE_BRIDGE2,
                             text:"Bridge2", control:PARAMETERS.PARAMETER_TEXTBOX
+                        },
+                        {
+                            id: PARAMETER_TYPE.PARAMETER_TYPE_SPIKES1,
+                            text:"Spikes1", control:PARAMETERS.PARAMETER_TEXTBOX
+                        },
+                        {
+                            id: PARAMETER_TYPE.PARAMETER_TYPE_SPIKES2,
+                            text:"Spikes2", control:PARAMETERS.PARAMETER_TEXTBOX
+                        },
+                        {
+                            id: PARAMETER_TYPE.PARAMETER_TYPE_SPIKES3,
+                            text:"Spikes3", control:PARAMETERS.PARAMETER_TEXTBOX
+                        },
+                        {
+                            id: PARAMETER_TYPE.PARAMETER_TYPE_SPIKES4,
+                            text:"Spikes4", control:PARAMETERS.PARAMETER_TEXTBOX
                         } ]
                 },
                 {
@@ -211,6 +227,18 @@ let palette = function() {
                             text:"Hidden",
                             control:PARAMETERS.PARAMETER_CHECKBOX
                          }  ]
+                },
+                {
+                    id: TILE_TYPES.TILE_SPIKES,
+                    type: "spikes",
+                    value: "S",
+                    parameters: [
+                        {
+                            id: PARAMETER_TYPE.PARAMETER_TYPE_ID,
+                            text: "ID",
+                            control:PARAMETERS.PARAMETER_TEXTBOX
+                        }
+                    ]
                 }
             ];
         }

@@ -128,6 +128,12 @@ let exporter = function() {
                 tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_BRIDGE2]
             ];
             let mimic = tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_MIMIC] || false;
+            let spikesSet = [
+                tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_SPIKES1],
+                tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_SPIKES2],
+                tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_SPIKES3],
+                tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_SPIKES4]
+            ];
 
             switch (tile.type) {
                 case "start":
@@ -321,13 +327,31 @@ let exporter = function() {
                         }
                         context.unindent();
 
-                        if (doorData === "" && bridgeData === "") {
+                        let spikeData = "";
+                        context.indent();
+                        for (let spike of spikesSet) {
+                            if (spike != undefined && spike !== "")  { // can be null?
+                                if (spikeData === "") {
+                                    spikeData += context.padding + `<Spikes>` + context.newline;
+                                    context.indent();
+                                }
+                                spikeData += context.padding + `<Spike ID="${spike}" />` + context.newline;
+                            }
+                        }
+
+                        if (spikeData !== "") {
+                            context.unindent();
+                            spikeData += context.padding + `</Spikes>` + context.newline;
+                        }
+                        context.unindent();
+
+                        if (doorData === "" && bridgeData === "" && spikeData === "") {
                             context.output += context.padding +
                                `<Terminal X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}" />` + context.newline;
                         } else {
                             context.output += context.padding +
                                 `<Terminal X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}">` + context.newline
-                                + doorData + bridgeData + context.padding + "</Terminal>" + context.newline;
+                                + doorData + bridgeData + spikeData + context.padding + "</Terminal>" + context.newline;
                         }
                     }
                     break;
@@ -452,6 +476,17 @@ let exporter = function() {
                     {
                         context.output += context.padding +
                             `<Fountain X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}" />` + context.newline;
+                    }
+                    break;
+                case "spikes":
+                    {
+                        if (id != undefined && id !== "") { // can be null?                        
+                            context.output += context.padding +
+                                `<Spikes X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}" ID="${id}" />` + context.newline;
+                        } else {                            
+                            context.output += context.padding +
+                                `<Spikes X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}" />` + context.newline;
+                        }
                     }
                     break;
             }

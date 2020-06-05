@@ -78,6 +78,13 @@ button.tile#hidden
     background-color: pink;
 }
 
+button.tile#spikes
+{
+    text-align: center;
+    font-size: 20px;
+    background-color: red;
+}
+
 button.tile
 {
     width: 50px;
