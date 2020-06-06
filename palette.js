@@ -101,7 +101,12 @@ let palette = function() {
                         id: PARAMETER_TYPE.PARAMETER_TYPE_HIDDEN,
                         text:"Hidden",
                         control:PARAMETERS.PARAMETER_CHECKBOX
-                    } ]
+                    },
+                    {
+                        id: PARAMETER_TYPE.PARAMETER_TYPE_AI_TYPE,
+                        text:"AI", control:PARAMETERS.PARAMETER_DROPDOWN,
+                        values: [AI_TYPE.AI_TYPE_DEFAULT, AI_TYPE.AI_TYPE_BAT]
+                    }  ]
                 },
                 {
                     id: TILE_TYPES.TILE_TERMINAL,
@@ -147,7 +152,7 @@ let palette = function() {
                         {
                             id: PARAMETER_TYPE.PARAMETER_TYPE_SPIKES4,
                             text:"Spikes4", control:PARAMETERS.PARAMETER_TEXTBOX
-                        } ]
+                        }] 
                 },
                 {
                     id: TILE_TYPES.TILE_HIDDEN,

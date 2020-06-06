@@ -134,6 +134,7 @@ let exporter = function() {
                 tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_SPIKES3],
                 tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_SPIKES4]
             ];
+            let aiType = tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_AI_TYPE] || AI_TYPE.AI_TYPE_DEFAULT;
 
             switch (tile.type) {
                 case "start":
@@ -279,6 +280,9 @@ let exporter = function() {
                         }
                         if (cloak) {
                             context.output += ` Cloak="True"`;
+                        }
+                        if (aiType === AI_TYPE.AI_TYPE_BAT) {
+                            context.output += ` Type="Bat"`;
                         }
                         context.output += `>` + context.newline;
                         context.indent();
