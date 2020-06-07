@@ -151,8 +151,15 @@ let exporter = function() {
                     break;
                 case "hole":
                     {
-                        context.output += context.padding +
-                            `<Room X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}" Type="Hole" />` + context.newline;
+                        let hidden = tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_HIDDEN] || false;
+
+                        if (hidden) {
+                            context.output += context.padding +
+                                `<Room X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}" Type="Hole" Hidden="True" />` + context.newline;
+                        } else {
+                            context.output += context.padding +
+                                `<Room X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}" Type="Hole" />` + context.newline;
+                        }
 
                         if (id !== undefined &&
                             (holeType === HOLE_TYPE.HOLE_TYPE_BRIDGE_START_ENABLED ||

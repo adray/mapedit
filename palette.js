@@ -50,6 +50,11 @@ let palette = function() {
                             HOLE_TYPE.HOLE_TYPE_BRIDGE_END,
                             HOLE_TYPE.HOLE_TYPE_BRIDGE_START_HIDDEN
                         ]
+                    },
+                    {
+                        id: PARAMETER_TYPE.PARAMETER_TYPE_HIDDEN,
+                        text:"Hidden",
+                        control:PARAMETERS.PARAMETER_CHECKBOX
                     } ]
                 },
                 {
