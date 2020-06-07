@@ -374,13 +374,27 @@ let exporter = function() {
                     let right = tile.x + 1 < context.width ? getIndex(tile.x+1, tile.y) : undefined;
                     if (up !== undefined && grid[up] !== undefined && isRoom(grid[up].item) &&
                         down !== undefined && grid[down] !== undefined && isRoom(grid[down].item)) {
-                            context.output += context.padding +
-                                `<FakeWall X1="${tile.x + context.offsetX}" Y1="${tile.y + context.offsetY}" X2="${tile.x + context.offsetX}" Y2="${tile.y-1 + context.offsetY}" />` + context.newline;
+                            let upHidden = grid[up].item.parameters[PARAMETER_TYPE.PARAMETER_TYPE_HIDDEN] || false;
+                            let downHidden = grid[down].item.parameters[PARAMETER_TYPE.PARAMETER_TYPE_HIDDEN] || false;
+                            if (upHidden) {
+                                context.output += context.padding +
+                                    `<FakeWall X1="${tile.x + context.offsetX}" Y1="${tile.y + context.offsetY}" X2="${tile.x + context.offsetX}" Y2="${tile.y-1 + context.offsetY}" />` + context.newline;
+                            } else if (downHidden) {
+                                context.output += context.padding +
+                                    `<FakeWall X1="${tile.x + context.offsetX}" Y1="${tile.y + context.offsetY}" X2="${tile.x + context.offsetX}" Y2="${tile.y+1 + context.offsetY}" />` + context.newline;
+                            }
                         }
                     else if (left !== undefined && grid[left] !== undefined && isRoom(grid[left].item) &&
                         right !== undefined && grid[right] !== undefined && isRoom(grid[right].item)) {
-                            context.output += context.padding +
-                                `<FakeWall X1="${tile.x-1 + context.offsetX}" Y1="${tile.y + context.offsetY}" X2="${tile.x + context.offsetX}" Y2="${tile.y + context.offsetY}" />` + context.newline;
+                            let leftHidden = grid[left].item.parameters[PARAMETER_TYPE.PARAMETER_TYPE_HIDDEN] || false;
+                            let rightHidden = grid[right].item.parameters[PARAMETER_TYPE.PARAMETER_TYPE_HIDDEN] || false;
+                            if (leftHidden) {
+                                context.output += context.padding +
+                                    `<FakeWall X1="${tile.x-1 + context.offsetX}" Y1="${tile.y + context.offsetY}" X2="${tile.x + context.offsetX}" Y2="${tile.y + context.offsetY}" />` + context.newline;
+                            } else if (rightHidden) {
+                                context.output += context.padding +
+                                    `<FakeWall X1="${tile.x+1 + context.offsetX}" Y1="${tile.y + context.offsetY}" X2="${tile.x + context.offsetX}" Y2="${tile.y + context.offsetY}" />` + context.newline;
+                            }
                         }
                     }
                     break;
