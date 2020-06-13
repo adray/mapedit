@@ -62,5 +62,6 @@ const HOLE_TYPE = {
 };
 const AI_TYPE = {
     AI_TYPE_DEFAULT: "Default",
-    AI_TYPE_BAT: "Bat"
+    AI_TYPE_BAT: "Bat",
+    AI_TYPE_PATROL: "Patrol"
 };

@@ -295,6 +295,33 @@ let exporter = function() {
                         context.indent();
                         context.output += context.padding +
                             `<Direction X="${dirX}" Y="${dirY}" />` + context.newline;
+                        if (aiType == AI_TYPE.AI_TYPE_PATROL) {
+                            let waypoints = [];
+                            let multipliers = [1, -1];
+                            for (let multiplier of multipliers) {
+                                let pX = tile.x;
+                                let pY = tile.y;
+                                while (function() {
+                                    let n = grid[getIndex(pX + dirX * multiplier, pY + dirY * multiplier)];
+                                    if (n === undefined) { return false; }
+                                    return n.item.type === "empty";
+                                }())
+                                {
+                                    pX += dirX * multiplier;
+                                    pY += dirY * multiplier;
+                                }
+
+                                waypoints.push({X: pX, Y: pY });
+                            }
+
+                            context.output += context.padding + `<Waypoints>` + context.newline;
+                            context.indent();
+                            for (let waypoint of waypoints) {
+                                context.output += context.padding + `<Waypoint X="${waypoint.X + context.offsetX}", Y="${waypoint.Y + context.offsetY}" Wait="2.0" />` + context.newline;
+                            }
+                            context.unindent();
+                            context.output += context.padding + `</Waypoints>` + context.newline;
+                        }
                         context.unindent();
                         context.output += context.padding + `</AI>` + context.newline;
 
