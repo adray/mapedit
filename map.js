@@ -119,6 +119,7 @@ Vue.component('editor', {
                 width: [1,2,3],
                 height: [1,2,3],
                 exportedData: "",
+                sharedData: "",
                 showLoadMap: false,
                 showParameters: false,
                 selectedTile: undefined,
@@ -171,6 +172,10 @@ Vue.component('editor', {
                 let w = this.$refs.width.value * 7;
                 let h = this.$refs.height.value * 6;
                 this.exportedData = exporter.exportMap(this.tiles, w, h, Number(this.selectedEffect));
+                this.sharedData = exporter.saveFileJSON(this.tiles,
+                    this.$refs.width.value,
+                    this.$refs.height.value,
+                    Number(this.selectedEffect));
             },
             saveMap: function() {
                 let saveData = exporter.saveFileJSON(
@@ -271,6 +276,7 @@ Vue.component('editor', {
                 <button v-on:click="exportMap">Export</button>\
                 <div>\
                     <textarea class="export">{{ exportedData }}</textarea>\
+                    <textarea class="export">{{ sharedData }}</textarea>\
                 </div>\
                 <loadMap v-if="showLoadMap" v-on:exitLoadMap="exitLoadMap" v-on:loadMap="loadMap($event)" />\
                 <parametersMenu v-if="showParameters"\

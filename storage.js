@@ -62,6 +62,30 @@ let storage = function() {
         }
     };
 
+    let deleteMapData = function(name) {
+        let maps = localStorage.getItem("MAP_LIST"); // return null if it doesn't exist yet
+
+        if (maps == undefined) {
+            maps = "";
+        }
+
+        let mapItems = maps.split(",");
+        maps = "";
+        for (let i = 0; i < mapItems.length; i++) {
+            if (mapItems[i] === name) {
+                continue;
+            }
+
+            if (maps === "") {
+                maps += mapItems[i];
+            } else {
+                maps += "," + mapItems[i];
+            }
+        }
+        
+        localStorage.setItem("MAP_LIST", maps);
+    };
+
     let getMapData = function(name) {
         return localStorage.getItem(name);
     };
@@ -98,6 +122,7 @@ let storage = function() {
         getMapData: getMapData,
         saveMapData: saveMapData,
         getMapList: getMapList,
+        deleteMapData: deleteMapData,
         getDungeonData: getDungeonData,
         saveDungeonData: saveDungeonData,
         getDungeonList: getDungeonList
