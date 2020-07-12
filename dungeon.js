@@ -265,6 +265,7 @@ Vue.component('editor', {
         },
         template: `\
         <div>\
+            <mapHeader />\
             <div class="editorGrid" v-bind:id="gridWidth">\
                 <tile v-for="tile in tiles"\
                     v-bind="tile"\

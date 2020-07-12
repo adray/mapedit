@@ -37,6 +37,7 @@ Vue.component('settings', {
     },
     template: '\
     <div>\
+        <mapHeader />\
         Maps\
         <mapItem v-for="map in maps"\
             v-bind:key="map"\

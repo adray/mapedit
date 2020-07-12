@@ -12,6 +12,7 @@ Vue.component('importer', {
     },
     template: '\
     <div>\
+        <mapHeader />\
         <div>\
             Name:<input name="mapname" ref="mapname" />\
         </div>\
