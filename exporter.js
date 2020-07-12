@@ -295,7 +295,7 @@ let exporter = function() {
                         context.indent();
                         context.output += context.padding +
                             `<Direction X="${dirX}" Y="${dirY}" />` + context.newline;
-                        if (aiType == AI_TYPE.AI_TYPE_PATROL) {
+                        if (aiType === AI_TYPE.AI_TYPE_PATROL) {
                             let waypoints = [];
                             let multipliers = [1, -1];
                             for (let multiplier of multipliers) {
@@ -314,6 +314,112 @@ let exporter = function() {
                                 waypoints.push({X: pX, Y: pY });
                             }
 
+                            context.output += context.padding + `<Waypoints>` + context.newline;
+                            context.indent();
+                            for (let waypoint of waypoints) {
+                                context.output += context.padding + `<Waypoint X="${waypoint.X + context.offsetX}", Y="${waypoint.Y + context.offsetY}" Wait="2.0" />` + context.newline;
+                            }
+                            context.unindent();
+                            context.output += context.padding + `</Waypoints>` + context.newline;
+                        } else if (aiType === AI_TYPE.AI_TYPE_LEFT || aiType === AI_TYPE.AI_TYPE_RIGHT) {
+                            let getLeft = function (dir) {
+                                let newDir = dir;
+                                switch (dir) {
+                                    case "Up":
+                                        newDir = "Left";
+                                        break;
+                                    case "Left":
+                                        newDir = "Down";
+                                        break;
+                                    case "Down":
+                                        newDir = "Right";
+                                        break;
+                                    case "Right":
+                                        newDir = "Up";
+                                        break;
+                                }
+                                return {
+                                    X: directionX[newDir],
+                                    Y: -directionY[newDir],
+                                    Dir: newDir
+                                };
+                            }
+                            let getRight = function (dir) {
+                                let newDir = dir;
+                                switch (dir) {
+                                    case "Up":
+                                        newDir = "Right";
+                                        break;
+                                    case "Right":
+                                        newDir = "Down";
+                                        break;
+                                    case "Down":
+                                        newDir = "Left";
+                                        break;
+                                    case "Left":
+                                        newDir = "Up";
+                                        break;
+                                }
+                                return {
+                                    X: directionX[newDir],
+                                    Y: -directionY[newDir],
+                                    Dir: newDir
+                                };
+                            }
+
+                            let waypoints = [];
+                            let curDir = direction;
+                            let curDirX = dirX;
+                            let curDirY = dirY;
+                            let pX = tile.x;
+                            let pY = tile.y;
+
+                            let checkBounds = function(x, y) {
+                                return x >= 0 && y >= 0 && x < context.width && y < context.width;
+                            }
+
+                            let loop = function(getDirection) {
+                                let d = getDirection(curDir);
+                                let nextX = pX + d.X;
+                                let nextY = pY + d.Y;
+                                if (checkBounds(nextY, nextY)) {
+                                    let n = grid[getIndex(nextX, nextY)];
+                                    if (n !== undefined) {
+                                        if (n.item.type === "empty" || n.item.type === "enemy") {
+                                            waypoints.push({X: pX, Y: pY}); // push current pos as waypoint
+                                            pX = nextX;
+                                            pY = nextY;
+                                            curDir = d.Dir;
+                                            curDirX = d.X;
+                                            curDirY = d.Y;
+                                            return true;
+                                        }
+                                    }
+                                }
+
+                                nextX = pX + curDirX;
+                                nextY = pY + curDirY;
+                                if (checkBounds(nextX, nextY)) {
+                                    let n = grid[getIndex(nextX, nextY)];
+                                    if (n !== undefined) {
+                                        if (n.item.type === "empty" || n.item.type === "enemy") {
+                                            if (nextX !== tile.x || nextY !== tile.y) { // exit when returned to start
+                                                pX = nextX;
+                                                pY = nextY;
+                                                return true;
+                                            } else {
+                                                return false; // don't record final pos
+                                            }
+                                        }
+                                    }
+                                }
+                                
+                                waypoints.push({X: pX, Y: pY}); // push final as waypoint
+                                return false;
+                            };
+
+                            let func = aiType === AI_TYPE.AI_TYPE_LEFT ? getLeft : getRight;
+                            while (loop(func));
                             context.output += context.padding + `<Waypoints>` + context.newline;
                             context.indent();
                             for (let waypoint of waypoints) {

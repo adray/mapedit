@@ -110,7 +110,7 @@ let palette = function() {
                     {
                         id: PARAMETER_TYPE.PARAMETER_TYPE_AI_TYPE,
                         text:"AI", control:PARAMETERS.PARAMETER_DROPDOWN,
-                        values: [AI_TYPE.AI_TYPE_DEFAULT, AI_TYPE.AI_TYPE_BAT, AI_TYPE.AI_TYPE_PATROL]
+                        values: [AI_TYPE.AI_TYPE_DEFAULT, AI_TYPE.AI_TYPE_BAT, AI_TYPE.AI_TYPE_PATROL, AI_TYPE.AI_TYPE_LEFT, AI_TYPE.AI_TYPE_RIGHT]
                     }  ]
                 },
                 {
