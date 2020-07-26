@@ -317,7 +317,7 @@ let exporter = function() {
                             context.output += context.padding + `<Waypoints>` + context.newline;
                             context.indent();
                             for (let waypoint of waypoints) {
-                                context.output += context.padding + `<Waypoint X="${waypoint.X + context.offsetX}", Y="${waypoint.Y + context.offsetY}" Wait="2.0" />` + context.newline;
+                                context.output += context.padding + `<Waypoint X="${waypoint.X + context.offsetX}" Y="${waypoint.Y + context.offsetY}" Wait="2.0" />` + context.newline;
                             }
                             context.unindent();
                             context.output += context.padding + `</Waypoints>` + context.newline;
@@ -423,7 +423,7 @@ let exporter = function() {
                             context.output += context.padding + `<Waypoints>` + context.newline;
                             context.indent();
                             for (let waypoint of waypoints) {
-                                context.output += context.padding + `<Waypoint X="${waypoint.X + context.offsetX}", Y="${waypoint.Y + context.offsetY}" Wait="2.0" />` + context.newline;
+                                context.output += context.padding + `<Waypoint X="${waypoint.X + context.offsetX}" Y="${waypoint.Y + context.offsetY}" Wait="2.0" />` + context.newline;
                             }
                             context.unindent();
                             context.output += context.padding + `</Waypoints>` + context.newline;
