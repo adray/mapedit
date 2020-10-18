@@ -157,6 +157,14 @@ let palette = function() {
                         {
                             id: PARAMETER_TYPE.PARAMETER_TYPE_SPIKES4,
                             text:"Spikes4", control:PARAMETERS.PARAMETER_TEXTBOX
+                        },
+                        {
+                            id: PARAMETER_TYPE.PARAMETER_TYPE_FAN1,
+                            text:"Fan1", control:PARAMETERS.PARAMETER_TEXTBOX
+                        },
+                        {
+                            id: PARAMETER_TYPE.PARAMETER_TYPE_FAN2,
+                            text:"Fan2", control:PARAMETERS.PARAMETER_TEXTBOX
                         }] 
                 },
                 {
@@ -247,6 +255,24 @@ let palette = function() {
                             id: PARAMETER_TYPE.PARAMETER_TYPE_ID,
                             text: "ID",
                             control:PARAMETERS.PARAMETER_TEXTBOX
+                        }
+                    ]
+                },
+                {
+                    id: TILE_TYPES.TILE_FAN,
+                    type: "fan",
+                    value: "WF",
+                    parameters: [
+                        {
+                            id: PARAMETER_TYPE.PARAMETER_TYPE_ID,
+                            text:"ID",
+                            control:PARAMETERS.PARAMETER_TEXTBOX
+                        },
+                        {
+                            id:  PARAMETER_TYPE.PARAMETER_TYPE_DIRECTION,
+                            text:"Direction",
+                            control:PARAMETERS.PARAMETER_DROPDOWN,
+                            values:["Up", "Down", "Right", "Left"]
                         }
                     ]
                 }

@@ -24,7 +24,7 @@ let exporter = function() {
 
         // Things which do not create standard rooms
         function isRoom(tile) {
-            return tile.type !== "wall" && tile.type !== "hole";
+            return tile.type !== "wall" && tile.type !== "hole" && tile.type !== "fan";
         }
 
         // Things which should only appear in a 1x1 room
@@ -133,6 +133,10 @@ let exporter = function() {
                 tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_SPIKES2],
                 tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_SPIKES3],
                 tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_SPIKES4]
+            ];
+            let fanSet = [
+                tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_FAN1],
+                tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_FAN2]
             ];
             let aiType = tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_AI_TYPE] || AI_TYPE.AI_TYPE_DEFAULT;
 
@@ -489,13 +493,31 @@ let exporter = function() {
                         }
                         context.unindent();
 
-                        if (doorData === "" && bridgeData === "" && spikeData === "") {
+                        let fanData = "";
+                        context.indent();
+                        for (let fan of fanSet) {
+                            if (fan != undefined && fan !== "")  { // can be null?
+                                if (fanData === "") {
+                                    fanData += context.padding + `<WindFans>` + context.newline;
+                                    context.indent();
+                                }
+                                fanData += context.padding + `<WindFan ID="${fan}" />` + context.newline;
+                            }
+                        }
+
+                        if (fanData !== "") {
+                            context.unindent();
+                            fanData += context.padding + `</WindFans>` + context.newline;
+                        }
+                        context.unindent();
+
+                        if (doorData === "" && bridgeData === "" && spikeData === "" && fanData === "") {
                             context.output += context.padding +
                                `<Terminal X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}" />` + context.newline;
                         } else {
                             context.output += context.padding +
                                 `<Terminal X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}">` + context.newline
-                                + doorData + bridgeData + spikeData + context.padding + "</Terminal>" + context.newline;
+                                + doorData + bridgeData + spikeData + fanData + context.padding + "</Terminal>" + context.newline;
                         }
                     }
                     break;
@@ -645,6 +667,21 @@ let exporter = function() {
                             context.output += context.padding +
                                 `<Spikes X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}" />` + context.newline;
                         }
+                    }
+                    break;
+                case "fan":
+                    {
+                        if (id != undefined && id !== "") { // can be null?                        
+                            context.output += context.padding +
+                                `<WindFan X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}" ID="${id}" Direction="${direction}" />` + context.newline;
+                        } else {                      
+                            context.output += context.padding +
+                                `<WindFan X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}" Direction="${direction}" />` + context.newline;
+                        }
+
+                        // We also generate a hole at this location so the tile can't be entered.
+                        context.output += context.padding +
+                            `<Room X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}" Type="Hole" />` + context.newline;
                     }
                     break;
             }
