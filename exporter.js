@@ -438,6 +438,53 @@ let exporter = function() {
                         context.enemies.push({ enemies: enemies, trigger: trigger, win: win});
                     }
                     break;
+                case "pressurePlate":
+                    {
+                        let doorData = "";
+                        context.indent();
+                        for (let door of doors) {
+                            if (door != undefined && door !== "") { // can be null?
+                                if (doorData === "") {
+                                    doorData = context.padding + "<Doors>" + context.newline;
+                                    context.indent();
+                                }
+                                doorData += context.padding + `<Door ID="${door}" />` + context.newline;
+                            }
+                        }
+                        if (doorData !== "") {
+                            context.unindent();
+                            doorData += context.padding + "</Doors>" + context.newline;
+                        }
+                        context.unindent();
+
+                        let fanData = "";
+                        context.indent();
+                        for (let fan of fanSet) {
+                            if (fan != undefined && fan !== "")  { // can be null?
+                                if (fanData === "") {
+                                    fanData += context.padding + `<WindFans>` + context.newline;
+                                    context.indent();
+                                }
+                                fanData += context.padding + `<WindFan ID="${fan}" />` + context.newline;
+                            }
+                        }
+
+                        if (fanData !== "") {
+                            context.unindent();
+                            fanData += context.padding + `</WindFans>` + context.newline;
+                        }
+                        context.unindent();
+
+                        if (doorData === "" && fanData === "") {
+                            context.output += context.padding +
+                               `<PressurePlate X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}" />` + context.newline;
+                        } else {
+                            context.output += context.padding +
+                                `<PressurePlate X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}">` + context.newline
+                                + doorData + fanData + context.padding + "</PressurePlate>" + context.newline;
+                        }
+                    }
+                    break;
                 case "terminal":
                     {
                         let doorData = "";

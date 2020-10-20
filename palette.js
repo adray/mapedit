@@ -275,6 +275,37 @@ let palette = function() {
                             values:["Up", "Down", "Right", "Left"]
                         }
                     ]
+                },
+                {
+                    id: TILE_TYPES.TILE_PRESSURE_PLATE,
+                    type: "pressurePlate",
+                    value: "PP",
+                    parameters: [
+                        {
+                            id: PARAMETER_TYPE.PARAMETER_TYPE_DOOR1,
+                            text:"Door1", control:PARAMETERS.PARAMETER_TEXTBOX
+                        },
+                        { 
+                            id: PARAMETER_TYPE.PARAMETER_TYPE_DOOR2,
+                            text:"Door2", control:PARAMETERS.PARAMETER_TEXTBOX 
+                        },
+                        {
+                            id: PARAMETER_TYPE.PARAMETER_TYPE_DOOR3,
+                            text:"Door3", control:PARAMETERS.PARAMETER_TEXTBOX
+                        },
+                        {
+                            id: PARAMETER_TYPE.PARAMETER_TYPE_DOOR4,
+                            text:"Door4", control:PARAMETERS.PARAMETER_TEXTBOX
+                        },
+                        {
+                            id: PARAMETER_TYPE.PARAMETER_TYPE_FAN1,
+                            text:"Fan1", control:PARAMETERS.PARAMETER_TEXTBOX
+                        },
+                        {
+                            id: PARAMETER_TYPE.PARAMETER_TYPE_FAN2,
+                            text:"Fan2", control:PARAMETERS.PARAMETER_TEXTBOX
+                        }
+                    ]
                 }
             ];
         }
