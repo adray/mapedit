@@ -61,6 +61,11 @@ let palette = function() {
                     id: TILE_TYPES.TILE_ENEMY,
                     type: "enemy",
                     value: "E",
+                    calculated: [ {
+                            id: CALCULATED_TYPE.CALCULATED_TYPE_CHALLENGE_RATING,
+                            text: "Challenge Rating"
+                        }
+                    ],
                     parameters: [ {
                         id: PARAMETER_TYPE.PARAMETER_TYPE_DIRECTION,
                         text:"Direction",

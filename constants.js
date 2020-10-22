@@ -71,3 +71,25 @@ const AI_TYPE = {
     AI_TYPE_LEFT: "Left",
     AI_TYPE_RIGHT: "Right"
 };
+const CALCULATED_TYPE = {
+    CALCULATED_TYPE_CHALLENGE_RATING: 0
+};
+const ENEMY_TYPES = {
+    VALUES: [ 
+        { Name: "Goon", Rating: 1 },
+        { Name: "Robot1", Rating: 2 },
+        { Name: "Jack", Rating: 2 },
+        { Name: "Doctor", Rating: 2 },
+        { Name: "Nurse", Rating: 2 },
+        { Name: "Warden", Rating: 2 },
+        { Name: "Hell Bot", Rating: 3 },
+        { Name: "Firebird", Rating: 3 },
+        { Name: "Bat", Rating: 3 },
+        { Name: "Ice Warrior", Rating: 3 },
+        { Name: "Catapult", Rating: 3 },
+        { Name: "Ice Master", Rating: 3 },
+        { Name: "Shade", Rating: 4 },
+        { Name: "Shadow Warrior", Rating: 4 },
+        { Name: "MultiHead", Rating: 5 }
+    ]
+};

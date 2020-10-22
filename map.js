@@ -1,5 +1,20 @@
 "use strict";
 
+let enemies = function() {
+    return {
+        lookup: function (name) {
+            let values = ENEMY_TYPES.VALUES;
+            for (let item of values) {
+                if (item.Name === name) {
+                    return item;
+                }
+            }
+
+            return null;
+        }
+    };
+}();
+
 Vue.component('tile', {
         template: '\
                     <button class="tile"\
@@ -83,17 +98,35 @@ Vue.component('parameter', {
     }
 });
 
+Vue.component('calculated', {
+    template: `<div>\
+        {{text}}\
+        <input type="textbox" v-model="paramValue" disabled="True" />\
+        </div>`,
+    props: ['id', 'text', 'paramValue']
+});
+
 Vue.component('parametersMenu', {
     template: '<div class="parametersWindow">\
-            <parameter\
-                v-for="param in palette[tile.tile_id].parameters"\
-                v-bind:key="param.id"\
-                v-bind:parameterType="param.control"\
-                v-bind:text="param.text"\
-                v-bind:initialValue="tile.parameters[param.id]"\
-                v-bind:values="param.values"\
-                v-bind:id="param.id"\
-                v-on:parameterChanged="parameterChanged" />\
+            <div>\
+                <parameter\
+                    v-for="param in palette[tile.tile_id].parameters"\
+                    v-bind:key="param.id"\
+                    v-bind:parameterType="param.control"\
+                    v-bind:text="param.text"\
+                    v-bind:initialValue="tile.parameters[param.id]"\
+                    v-bind:values="param.values"\
+                    v-bind:id="param.id"\
+                    v-on:parameterChanged="parameterChanged" />\
+            </div>\
+            <div>\
+                <calculated\
+                    v-for="calc in this.calc"\
+                    v-bind:key="calc.id"\
+                    v-bind:text="calc.text"\
+                    v-bind:id="calc.id"\
+                    v-bind:paramValue="calc.value" />\
+            </div>\
             <button v-on:click="exitMenu">Exit</button>\
         </div>',
     props: [ 'palette', 'tile' ],
@@ -103,7 +136,86 @@ Vue.component('parametersMenu', {
         },
         parameterChanged: function(parameter, value) {
             this.tile.parameters[parameter] = value;
+
+            for (let calc of this.calc) {
+                this.applyCalculation(calc, parameter, false);
+            }
+        },
+        applyCalculation: function(c, parameter, force) {
+            if (c.id === CALCULATED_TYPE.CALCULATED_TYPE_CHALLENGE_RATING) {
+                if (!force) {
+                    switch (parameter) {
+                    case PARAMETER_TYPE.PARAMETER_TYPE_ENEMY1:
+                    case PARAMETER_TYPE.PARAMETER_TYPE_ENEMY2:
+                    case PARAMETER_TYPE.PARAMETER_TYPE_ENEMY3:
+                    case PARAMETER_TYPE.PARAMETER_TYPE_ENEMY4:
+                        {
+                            this.applyChallengeRating(c);
+                        }
+                        break;
+                    }
+                } else {
+                    this.applyChallengeRating(c);
+                }
+            }
+        },
+        applyChallengeRating: function(c) {
+            let e = [this.tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_ENEMY1] || "",
+                this.tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_ENEMY2] || "",
+                this.tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_ENEMY3] || "",
+                this.tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_ENEMY4] || ""];
+            let rating = 0;
+            let count = 0;
+            for (let item of e) {
+                if (item != "") {
+                    let enemy = enemies.lookup(item);
+                    if (enemy !== null) {
+                        rating = Math.max(rating, enemy.Rating);
+                        count++;
+                    }
+                }
+            }
+
+            switch (count) {
+                case 0:
+                    c.value = 0;
+                    break;
+                case 1:
+                    c.value = rating * 0.8;
+                    break;
+                case 2:
+                    c.value = rating;
+                    break;
+                case 3:
+                    c.value = rating * 1.5;
+                    break;
+                case 4:
+                    c.value = rating * 3;
+                    break;
+            }
+        },
+        getCalcs: function() {
+            let mapped = [];
+            let list = this.palette[this.tile.tile_id].calculated;
+            for (let c of list) {
+                let item = {
+                    id: c.id,
+                    text: c.text,
+                    value: ""
+                };
+                console.log(item.id);
+                this.applyCalculation(item, null, true);
+                mapped.push(item);
+            }
+
+            return mapped;
         }
+    },
+    data: function() {
+        let calcs = this.getCalcs();
+        return {
+            calc: calcs
+        };
     }
 });
 
