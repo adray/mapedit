@@ -11,6 +11,14 @@ let enemies = function() {
             }
 
             return null;
+        },
+        getData: function() {
+            let values = ENEMY_TYPES.VALUES;
+            let list = [];
+            for (let item of values) {
+                list.push(item.Name);
+            }
+            return list;
         }
     };
 }();
@@ -84,8 +92,14 @@ Vue.component('parameter', {
         <select v-model="paramValue" v-if="parameterType===${PARAMETERS.PARAMETER_DROPDOWN}">\
             <option v-for="item in values" v-bind:selected="this.paramValue === item">{{item}}</option>\
         </select>\
+        <span v-if="parameterType===${PARAMETERS.PARAMETER_DATALIST}">\
+            <input type="text" v-model="paramValue" list="data_input">\
+            <datalist id="data_input">\
+                <option v-for="item2 in this.getDataList()" >{{item2}}</option>\
+            </datalist>\
+        </span>\
         </div>`,
-    props: [ 'id', 'text', 'parameterType', 'values', 'initialValue' ],
+    props: [ 'id', 'text', 'parameterType', 'values', 'initialValue', 'listSource' ],
     data: function() {
         return {
             paramValue: this.initialValue
@@ -94,6 +108,14 @@ Vue.component('parameter', {
     watch: {
         paramValue: function(newValue, oldValue) {
             this.$emit("parameterChanged", this.id, newValue);
+        }
+    },
+    methods: {
+        getDataList: function() {
+            if (this.listSource === DATALIST_SOURCE.DATALIST_SOURCE_ENEMY) {
+                return enemies.getData();
+            }
+            return [];
         }
     }
 });
@@ -117,6 +139,7 @@ Vue.component('parametersMenu', {
                     v-bind:initialValue="tile.parameters[param.id]"\
                     v-bind:values="param.values"\
                     v-bind:id="param.id"\
+                    v-bind:listSource="param.source"\
                     v-on:parameterChanged="parameterChanged" />\
             </div>\
             <div>\
@@ -203,7 +226,6 @@ Vue.component('parametersMenu', {
                     text: c.text,
                     value: ""
                 };
-                console.log(item.id);
                 this.applyCalculation(item, null, true);
                 mapped.push(item);
             }

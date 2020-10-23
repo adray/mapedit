@@ -23,7 +23,8 @@ const TILE_TYPES = {
 const PARAMETERS = {
     PARAMETER_CHECKBOX: 0,
     PARAMETER_TEXTBOX: 1,
-    PARAMETER_DROPDOWN: 2
+    PARAMETER_DROPDOWN: 2,
+    PARAMETER_DATALIST: 3
 };
 const PARAMETER_TYPE = {
     PARAMETER_TYPE_HIDDEN: 0,
@@ -77,6 +78,7 @@ const CALCULATED_TYPE = {
 const ENEMY_TYPES = {
     VALUES: [ 
         { Name: "Goon", Rating: 1 },
+        { Name: "Goon Leader", Rating: 2 },
         { Name: "Robot1", Rating: 2 },
         { Name: "Jack", Rating: 2 },
         { Name: "Doctor", Rating: 2 },
@@ -92,4 +94,7 @@ const ENEMY_TYPES = {
         { Name: "Shadow Warrior", Rating: 4 },
         { Name: "MultiHead", Rating: 5 }
     ]
+};
+const DATALIST_SOURCE = {
+    DATALIST_SOURCE_ENEMY: 0
 };

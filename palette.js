@@ -85,22 +85,26 @@ let palette = function() {
                     {
                         id: PARAMETER_TYPE.PARAMETER_TYPE_ENEMY1,
                         text:"Enemy1",
-                        control:PARAMETERS.PARAMETER_TEXTBOX
+                        control:PARAMETERS.PARAMETER_DATALIST,
+                        source:DATALIST_SOURCE.DATALIST_SOURCE_ENEMY
                     },
                     {
                         id: PARAMETER_TYPE.PARAMETER_TYPE_ENEMY2,
                         text:"Enemy2",
-                        control:PARAMETERS.PARAMETER_TEXTBOX
+                        control:PARAMETERS.PARAMETER_DATALIST,
+                        source:DATALIST_SOURCE.DATALIST_SOURCE_ENEMY
                     },
                     {
                         id: PARAMETER_TYPE.PARAMETER_TYPE_ENEMY3,
                         text:"Enemy3",
-                        control:PARAMETERS.PARAMETER_TEXTBOX
+                        control:PARAMETERS.PARAMETER_DATALIST,
+                        source:DATALIST_SOURCE.DATALIST_SOURCE_ENEMY
                     },
                     {
                         id: PARAMETER_TYPE.PARAMETER_TYPE_ENEMY4,
                         text:"Enemy4",
-                        control:PARAMETERS.PARAMETER_TEXTBOX
+                        control:PARAMETERS.PARAMETER_DATALIST,
+                        source:DATALIST_SOURCE.DATALIST_SOURCE_ENEMY
                     },
                     {
                         id: PARAMETER_TYPE.PARAMETER_TYPE_WIN,
