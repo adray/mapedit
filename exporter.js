@@ -139,6 +139,7 @@ let exporter = function() {
                 tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_FAN2]
             ];
             let aiType = tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_AI_TYPE] || AI_TYPE.AI_TYPE_DEFAULT;
+            let fanStrength = tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_FAN_STRENGTH] || 5;
 
             switch (tile.type) {
                 case "start":
@@ -720,10 +721,10 @@ let exporter = function() {
                     {
                         if (id != undefined && id !== "") { // can be null?                        
                             context.output += context.padding +
-                                `<WindFan X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}" ID="${id}" Direction="${direction}" />` + context.newline;
+                                `<WindFan X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}" ID="${id}" Strength="${fanStrength}" Direction="${direction}" />` + context.newline;
                         } else {                      
                             context.output += context.padding +
-                                `<WindFan X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}" Direction="${direction}" />` + context.newline;
+                                `<WindFan X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}" Strength="${fanStrength}" Direction="${direction}" />` + context.newline;
                         }
 
                         // We also generate a hole at this location so the tile can't be entered.

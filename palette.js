@@ -282,6 +282,12 @@ let palette = function() {
                             text:"Direction",
                             control:PARAMETERS.PARAMETER_DROPDOWN,
                             values:["Up", "Down", "Right", "Left"]
+                        },
+                        {
+                            id: PARAMETER_TYPE.PARAMETER_TYPE_FAN_STRENGTH,
+                            text: "Strength",
+                            control:PARAMETERS.PARAMETER_DROPDOWN,
+                            values:[1,2,3,4,5]
                         }
                     ]
                 },
