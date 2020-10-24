@@ -219,7 +219,7 @@ Vue.component('parametersMenu', {
         },
         getCalcs: function() {
             let mapped = [];
-            let list = this.palette[this.tile.tile_id].calculated;
+            let list = this.palette[this.tile.tile_id].calculated || [];
             for (let c of list) {
                 let item = {
                     id: c.id,

@@ -375,12 +375,12 @@ let exporter = function() {
                             let waypoints = [];
                             let curDir = direction;
                             let curDirX = dirX;
-                            let curDirY = dirY;
+                            let curDirY = -dirY;
                             let pX = tile.x;
                             let pY = tile.y;
 
                             let checkBounds = function(x, y) {
-                                return x >= 0 && y >= 0 && x < context.width && y < context.width;
+                                return x >= 0 && y >= 0 && x < context.width && y < context.height;
                             }
 
                             let loop = function(getDirection) {
@@ -392,12 +392,16 @@ let exporter = function() {
                                     if (n !== undefined) {
                                         if (n.item.type === "empty" || n.item.type === "enemy") {
                                             waypoints.push({X: pX, Y: pY}); // push current pos as waypoint
-                                            pX = nextX;
-                                            pY = nextY;
-                                            curDir = d.Dir;
-                                            curDirX = d.X;
-                                            curDirY = d.Y;
-                                            return true;
+                                            if (nextX !== tile.x || nextY !== tile.y) { // exit when returned to start
+                                                pX = nextX;
+                                                pY = nextY;
+                                                curDir = d.Dir;
+                                                curDirX = d.X;
+                                                curDirY = d.Y;
+                                                return true;
+                                            } else {
+                                                return false;
+                                            }
                                         }
                                     }
                                 }
