@@ -140,6 +140,21 @@ let exporter = function() {
             ];
             let aiType = tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_AI_TYPE] || AI_TYPE.AI_TYPE_DEFAULT;
             let fanStrength = tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_FAN_STRENGTH] || 5;
+            let isRallyPoint = tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_RALLYPOINT] || false;
+            let rallyPoints = [
+                tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_RALLYPOINT_ID1],
+                tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_RALLYPOINT_ID2],
+                tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_RALLYPOINT_ID3],
+                tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_RALLYPOINT_ID4]
+            ];
+            let barriers = [
+                tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_BARRIER1],
+                tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_BARRIER2]
+            ];
+            let coils = [
+                tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_TESLA_COIL1],
+                tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_TESLA_COIL2]
+            ];
 
             switch (tile.type) {
                 case "start":
@@ -285,6 +300,11 @@ let exporter = function() {
                         let trigger = `Trigger_Fight_${context.floorId}_${context.enemies.length+1}`;
                         let dirX = directionX[direction];
                         let dirY = directionY[direction];
+                        if (isRallyPoint) {
+                            context.output += context.padding + `<RallyPoint Enabled="False" SpawnCount="1" ID="${id}">` + context.newline;
+                            context.indent();
+                        }
+
                         context.output += context.padding +
                             `<AI X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}" OnSight="${trigger}"`;
                         if (elite) {
@@ -440,6 +460,11 @@ let exporter = function() {
                         context.unindent();
                         context.output += context.padding + `</AI>` + context.newline;
 
+                        if (isRallyPoint) {
+                            context.unindent();
+                            context.output += context.padding + `</RallyPoint>` + context.newline;
+                        }
+
                         context.enemies.push({ enemies: enemies, trigger: trigger, win: win});
                     }
                     break;
@@ -563,13 +588,49 @@ let exporter = function() {
                         }
                         context.unindent();
 
-                        if (doorData === "" && bridgeData === "" && spikeData === "" && fanData === "") {
+                        let barrierData = "";
+                        context.indent();
+                        for (let barrier of barriers) {
+                            if (barrier != undefined && barrier !== "")  { // can be null?
+                                if (barrierData === "") {
+                                    barrierData += context.padding + `<Barriers>` + context.newline;
+                                    context.indent();
+                                }
+                                barrierData += context.padding + `<Barrier ID="${barrier}" />` + context.newline;
+                            }
+                        }
+
+                        if (barrierData !== "") {
+                            context.unindent();
+                            barrierData += context.padding + `</Barriers>` + context.newline;
+                        }
+                        context.unindent();
+
+                        let coilData = "";
+                        context.indent();
+                        for (let coil of coils) {
+                            if (coil != undefined && coil !== "")  { // can be null?
+                                if (coilData === "") {
+                                    coilData += context.padding + `<TeslaCoils>` + context.newline;
+                                    context.indent();
+                                }
+                                coilData += context.padding + `<TeslaCoil ID="${coil}" />` + context.newline;
+                            }
+                        }
+
+                        if (coilData !== "") {
+                            context.unindent();
+                            coilData += context.padding + `</TeslaCoils>` + context.newline;
+                        }
+                        context.unindent();
+
+                        if (doorData === "" && bridgeData === "" && spikeData === "" && fanData === "" && coilData === "" && barrierData === "") {
                             context.output += context.padding +
                                `<Terminal X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}" />` + context.newline;
                         } else {
                             context.output += context.padding +
                                 `<Terminal X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}">` + context.newline
-                                + doorData + bridgeData + spikeData + fanData + context.padding + "</Terminal>" + context.newline;
+                                + doorData + bridgeData + spikeData + fanData + barrierData + coilData + context.padding + "</Terminal>" + context.newline;
                         }
                     }
                     break;
@@ -734,6 +795,57 @@ let exporter = function() {
                         // We also generate a hole at this location so the tile can't be entered.
                         context.output += context.padding +
                             `<Room X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}" Type="Hole" />` + context.newline;
+                    }
+                    break;
+                case "coil":
+                    {
+                        if (id != undefined && id !== "") { // can be null?                        
+                            context.output += context.padding +
+                                `<TeslaCoil X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}" ID="${id}" />` + context.newline;
+                        } else {                      
+                            context.output += context.padding +
+                                `<TeslaCoil X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}" />` + context.newline;
+                        }
+                    }
+                    break;
+                case "barrier":
+                    {                        
+                        let up = tile.y > 0 ? getIndex(tile.x, tile.y - 1) : undefined;
+                        let down = tile.y+1 < context.height ? getIndex(tile.x, tile.y + 1) : undefined;
+                        let left = tile.x > 0 ? getIndex(tile.x-1, tile.y) : undefined;
+                        let right = tile.x + 1 < context.width ? getIndex(tile.x+1, tile.y) : undefined;
+
+                        let dirX = 0;
+                        let dirY = 0;
+
+                        if (up !== undefined && grid[up] !== undefined && isRoom(grid[up].item) &&
+                            down !== undefined && grid[down] !== undefined && isRoom(grid[down].item)) {
+                            dirY = 1;
+                        } else {
+                            dirX = 1;
+                        }
+
+                        if (id != undefined && id !== "") { // can be null?                        
+                            context.output += context.padding +
+                                `<Barrier X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}" DirX="${dirX}" DirY="${dirY}" ID="${id}">` + context.newline;
+                        } else {                      
+                            context.output += context.padding +
+                                `<Barrier X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}" DirX="${dirX}" DirY="${dirY}">` + context.newline;
+                        }
+
+                        context.indent();
+                        context.output += context.padding + '<RallyPoints>' + context.newline;
+                        context.indent();
+                        for (let p of rallyPoints) { // can be null?
+                            if (p != undefined && p !== "") {
+                                context.output += context.padding + `<RallyPoint ID="${p}" />` + context.newline;
+                            }
+                        }
+                        context.unindent();
+                        context.output += context.padding + '</RallyPoints>' + context.newline;
+                        context.unindent();
+
+                        context.output += context.padding + '</Barrier>' + context.newline;
                     }
                     break;
             }

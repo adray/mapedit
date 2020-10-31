@@ -23,6 +23,40 @@ let enemies = function() {
     };
 }();
 
+let identifers = function() {
+    return {
+        is: function(type) {
+            switch (type) {
+                case PARAMETER_TYPE.PARAMETER_TYPE_ID:
+                case PARAMETER_TYPE.PARAMETER_TYPE_BARRIER1:
+                case PARAMETER_TYPE.PARAMETER_TYPE_BARRIER2:
+                case PARAMETER_TYPE.PARAMETER_TYPE_BARRIER2:
+                case PARAMETER_TYPE.PARAMETER_TYPE_RALLYPOINT_ID1:
+                case PARAMETER_TYPE.PARAMETER_TYPE_RALLYPOINT_ID2:
+                case PARAMETER_TYPE.PARAMETER_TYPE_RALLYPOINT_ID3:
+                case PARAMETER_TYPE.PARAMETER_TYPE_RALLYPOINT_ID4:
+                case PARAMETER_TYPE.PARAMETER_TYPE_SPIKES1:
+                case PARAMETER_TYPE.PARAMETER_TYPE_SPIKES2:
+                case PARAMETER_TYPE.PARAMETER_TYPE_SPIKES3:
+                case PARAMETER_TYPE.PARAMETER_TYPE_SPIKES4:
+                case PARAMETER_TYPE.PARAMETER_TYPE_TESLA_COIL1:
+                case PARAMETER_TYPE.PARAMETER_TYPE_TESLA_COIL2:
+                case PARAMETER_TYPE.PARAMETER_TYPE_FAN1:
+                case PARAMETER_TYPE.PARAMETER_TYPE_FAN2:
+                case PARAMETER_TYPE.PARAMETER_TYPE_BRIDGE1:
+                case PARAMETER_TYPE.PARAMETER_TYPE_BRIDGE2:
+                case PARAMETER_TYPE.PARAMETER_TYPE_DOOR1:
+                case PARAMETER_TYPE.PARAMETER_TYPE_DOOR2:
+                case PARAMETER_TYPE.PARAMETER_TYPE_DOOR3:
+                case PARAMETER_TYPE.PARAMETER_TYPE_DOOR4:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+    }
+}();
+
 Vue.component('tile', {
         template: '\
                     <button class="tile"\
@@ -93,27 +127,48 @@ Vue.component('parameter', {
             <option v-for="item in values" v-bind:selected="this.paramValue === item">{{item}}</option>\
         </select>\
         <span v-if="parameterType===${PARAMETERS.PARAMETER_DATALIST}">\
-            <input type="text" v-model="paramValue" list="data_input">\
-            <datalist id="data_input">\
-                <option v-for="item2 in this.getDataList()" >{{item2}}</option>\
+            <input type="text" v-model="paramValue" v-bind:list="this.inputName">\
+            <datalist v-bind:id="this.inputName">\
+                <option v-for="item2 in this.dataList" >{{item2}}</option>\
             </datalist>\
         </span>\
         </div>`,
-    props: [ 'id', 'text', 'parameterType', 'values', 'initialValue', 'listSource' ],
+    props: [ 'id', 'text', 'parameterType', 'values', 'initialValue', 'listSource', 'context' ],
     data: function() {
         return {
-            paramValue: this.initialValue
+            paramValue: this.initialValue,
+            duplicateId: true,
+            dataList: [],
+            inputName: `data_input_${this.id}`
         };
+    },
+    mounted: function() {
+        this.dataList = this.getDataList();
     },
     watch: {
         paramValue: function(newValue, oldValue) {
             this.$emit("parameterChanged", this.id, newValue);
+
+            // Update the list of ids:
+            if (identifers.is(this.id)) {
+                if (!this.duplicateId) {
+                    this.context.idSource.delete(oldValue);
+                }
+
+                this.duplicateId = this.context.idSource.has(newValue);
+                if (newValue !== "") {
+                    this.context.idSource.add(newValue);
+                }
+                this.dataList = this.getDataList();
+            }
         }
     },
     methods: {
         getDataList: function() {
             if (this.listSource === DATALIST_SOURCE.DATALIST_SOURCE_ENEMY) {
                 return enemies.getData();
+            } else if (this.listSource === DATALIST_SOURCE.DATALIST_SOURCE_ID) {
+                return this.context.idSource;
             }
             return [];
         }
@@ -140,6 +195,7 @@ Vue.component('parametersMenu', {
                     v-bind:values="param.values"\
                     v-bind:id="param.id"\
                     v-bind:listSource="param.source"\
+                    v-bind:context="context"\
                     v-on:parameterChanged="parameterChanged" />\
             </div>\
             <div>\
@@ -152,7 +208,7 @@ Vue.component('parametersMenu', {
             </div>\
             <button v-on:click="exitMenu">Exit</button>\
         </div>',
-    props: [ 'palette', 'tile' ],
+    props: [ 'palette', 'tile', 'context' ],
     methods: {
         exitMenu: function() {
             this.$emit("exitParametersMenu");
@@ -260,10 +316,14 @@ Vue.component('editor', {
                 selectedEffect: effects[0].id,
                 effects: effects,
                 modes: [{ id: EDITMODES.MODE_PAINT, text:"Paint" }, { id: EDITMODES.MODE_DESIGN, text:"Design"}],
-                editMode: EDITMODES.MODE_PAINT
+                editMode: EDITMODES.MODE_PAINT,
+                context: this.createContext()
             };
         },
         methods: {
+            createContext: function() {
+                return { idSource: new Set() };
+            },
             createEffects: function() {
                 return [
                     {id:EFFECT_TYPES.EFFECT_TYPE_NONE, text: "No effect"},
@@ -363,6 +423,7 @@ Vue.component('editor', {
                     this.$refs.width.value = mapInfo.widthScale;
                     this.$refs.height.value = mapInfo.heightScale;
                     this.selectedEffect = mapInfo.effect || 0;
+                    this.context = this.createContext();
                     this.resize();
                     
                     let id = 0;
@@ -377,6 +438,15 @@ Vue.component('editor', {
                     if (mapInfo.parameters !== undefined) {
                         for (let param of mapInfo.parameters) {
                             this.tiles[param.id].parameters = param.parameters;
+
+                            for (let elementId = 0; elementId < param.parameters.length; elementId++) {
+                                let element = param.parameters[elementId];
+                                if (element != undefined) { // is case null
+                                    if (identifers.is(elementId)) {
+                                        this.context.idSource.add(element);
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -416,7 +486,8 @@ Vue.component('editor', {
                 <loadMap v-if="showLoadMap" v-on:exitLoadMap="exitLoadMap" v-on:loadMap="loadMap($event)" />\
                 <parametersMenu v-if="showParameters"\
                     v-bind:palette="this.palette"\
-                    v-bind:tile="this.selectedTile" \
+                    v-bind:tile="this.selectedTile"\
+                    v-bind:context="this.context" \
                     v-on:exitParametersMenu="exitDesignMenu" />\
             </div>'
 });

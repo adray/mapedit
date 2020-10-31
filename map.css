@@ -97,6 +97,18 @@ button.tile#pressurePlate
     font-size: 20px;
 }
 
+button.tile#coil
+{
+    text-align: center;
+    font-size: 20px;
+}
+
+button.tile#barrier
+{
+    text-align: center;
+    font-size: 20px;
+}
+
 button.tile
 {
     width: 50px;

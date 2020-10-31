@@ -38,7 +38,8 @@ let palette = function() {
                     parameters: [ {
                         id: PARAMETER_TYPE.PARAMETER_TYPE_ID,
                         text: "ID",
-                        control:PARAMETERS.PARAMETER_TEXTBOX
+                        control:PARAMETERS.PARAMETER_DATALIST,
+                        source:DATALIST_SOURCE.DATALIST_SOURCE_ID
                     },
                     {
                         id: PARAMETER_TYPE.PARAMETER_TYPE_HOLE_TYPE,
@@ -120,7 +121,17 @@ let palette = function() {
                         id: PARAMETER_TYPE.PARAMETER_TYPE_AI_TYPE,
                         text:"AI", control:PARAMETERS.PARAMETER_DROPDOWN,
                         values: [AI_TYPE.AI_TYPE_DEFAULT, AI_TYPE.AI_TYPE_BAT, AI_TYPE.AI_TYPE_PATROL, AI_TYPE.AI_TYPE_LEFT, AI_TYPE.AI_TYPE_RIGHT]
-                    }  ]
+                    },
+                    {
+                        id: PARAMETER_TYPE.PARAMETER_TYPE_RALLYPOINT,
+                        text:"RallyPoint", control:PARAMETERS.PARAMETER_CHECKBOX
+                    },
+                    {
+                        id: PARAMETER_TYPE.PARAMETER_TYPE_ID,
+                        text: "ID",
+                        control:PARAMETERS.PARAMETER_DATALIST,
+                        source:DATALIST_SOURCE.DATALIST_SOURCE_ID
+                    } ]
                 },
                 {
                     id: TILE_TYPES.TILE_TERMINAL,
@@ -129,51 +140,83 @@ let palette = function() {
                     parameters: [
                         {
                             id: PARAMETER_TYPE.PARAMETER_TYPE_DOOR1,
-                            text:"Door1", control:PARAMETERS.PARAMETER_TEXTBOX
+                            text:"Door1", control:PARAMETERS.PARAMETER_DATALIST,
+                            source:DATALIST_SOURCE.DATALIST_SOURCE_ID
                         },
                         { 
                             id: PARAMETER_TYPE.PARAMETER_TYPE_DOOR2,
-                            text:"Door2", control:PARAMETERS.PARAMETER_TEXTBOX 
+                            text:"Door2", control:PARAMETERS.PARAMETER_DATALIST,
+                            source:DATALIST_SOURCE.DATALIST_SOURCE_ID
                         },
                         {
                             id: PARAMETER_TYPE.PARAMETER_TYPE_DOOR3,
-                            text:"Door3", control:PARAMETERS.PARAMETER_TEXTBOX
+                            text:"Door3", control:PARAMETERS.PARAMETER_DATALIST,
+                            source:DATALIST_SOURCE.DATALIST_SOURCE_ID
                         },
                         {
                             id: PARAMETER_TYPE.PARAMETER_TYPE_DOOR4,
-                            text:"Door4", control:PARAMETERS.PARAMETER_TEXTBOX
+                            text:"Door4", control:PARAMETERS.PARAMETER_DATALIST,
+                            source:DATALIST_SOURCE.DATALIST_SOURCE_ID
                         },
                         {
                             id: PARAMETER_TYPE.PARAMETER_TYPE_BRIDGE1,
-                            text:"Bridge1", control:PARAMETERS.PARAMETER_TEXTBOX
+                            text:"Bridge1", control:PARAMETERS.PARAMETER_DATALIST,
+                            source:DATALIST_SOURCE.DATALIST_SOURCE_ID
                         },
                         {
                             id: PARAMETER_TYPE.PARAMETER_TYPE_BRIDGE2,
-                            text:"Bridge2", control:PARAMETERS.PARAMETER_TEXTBOX
+                            text:"Bridge2", control:PARAMETERS.PARAMETER_DATALIST,
+                            source:DATALIST_SOURCE.DATALIST_SOURCE_ID
                         },
                         {
                             id: PARAMETER_TYPE.PARAMETER_TYPE_SPIKES1,
-                            text:"Spikes1", control:PARAMETERS.PARAMETER_TEXTBOX
+                            text:"Spikes1", control:PARAMETERS.PARAMETER_DATALIST,
+                            source:DATALIST_SOURCE.DATALIST_SOURCE_ID
                         },
                         {
                             id: PARAMETER_TYPE.PARAMETER_TYPE_SPIKES2,
-                            text:"Spikes2", control:PARAMETERS.PARAMETER_TEXTBOX
+                            text:"Spikes2", control:PARAMETERS.PARAMETER_DATALIST,
+                            source:DATALIST_SOURCE.DATALIST_SOURCE_ID
                         },
                         {
                             id: PARAMETER_TYPE.PARAMETER_TYPE_SPIKES3,
-                            text:"Spikes3", control:PARAMETERS.PARAMETER_TEXTBOX
+                            text:"Spikes3", control:PARAMETERS.PARAMETER_DATALIST,
+                            source:DATALIST_SOURCE.DATALIST_SOURCE_ID
                         },
                         {
                             id: PARAMETER_TYPE.PARAMETER_TYPE_SPIKES4,
-                            text:"Spikes4", control:PARAMETERS.PARAMETER_TEXTBOX
+                            text:"Spikes4", control:PARAMETERS.PARAMETER_DATALIST,
+                            source:DATALIST_SOURCE.DATALIST_SOURCE_ID
                         },
                         {
                             id: PARAMETER_TYPE.PARAMETER_TYPE_FAN1,
-                            text:"Fan1", control:PARAMETERS.PARAMETER_TEXTBOX
+                            text:"Fan1", control:PARAMETERS.PARAMETER_DATALIST,
+                            source:DATALIST_SOURCE.DATALIST_SOURCE_ID
                         },
                         {
                             id: PARAMETER_TYPE.PARAMETER_TYPE_FAN2,
-                            text:"Fan2", control:PARAMETERS.PARAMETER_TEXTBOX
+                            text:"Fan2", control:PARAMETERS.PARAMETER_DATALIST,
+                            source:DATALIST_SOURCE.DATALIST_SOURCE_ID
+                        },
+                        {
+                            id: PARAMETER_TYPE.PARAMETER_TYPE_BARRIER1,
+                            text:"Barrier1", control:PARAMETERS.PARAMETER_DATALIST,
+                            source:DATALIST_SOURCE.DATALIST_SOURCE_ID
+                        },
+                        {
+                            id: PARAMETER_TYPE.PARAMETER_TYPE_BARRIER2,
+                            text:"Barrier2", control:PARAMETERS.PARAMETER_DATALIST,
+                            source:DATALIST_SOURCE.DATALIST_SOURCE_ID
+                        },
+                        {
+                            id: PARAMETER_TYPE.PARAMETER_TYPE_TESLA_COIL1,
+                            text:"TeslaCoil1", control:PARAMETERS.PARAMETER_DATALIST,
+                            source:DATALIST_SOURCE.DATALIST_SOURCE_ID
+                        },
+                        {
+                            id: PARAMETER_TYPE.PARAMETER_TYPE_TESLA_COIL2,
+                            text:"TeslaCoil2", control:PARAMETERS.PARAMETER_DATALIST,
+                            source:DATALIST_SOURCE.DATALIST_SOURCE_ID
                         }] 
                 },
                 {
@@ -194,7 +237,8 @@ let palette = function() {
                         {
                             id: PARAMETER_TYPE.PARAMETER_TYPE_ID,
                             text:"ID",
-                            control:PARAMETERS.PARAMETER_TEXTBOX
+                            control:PARAMETERS.PARAMETER_DATALIST,
+                            source:DATALIST_SOURCE.DATALIST_SOURCE_ID
                         } ]
                 },
                 {
@@ -263,7 +307,8 @@ let palette = function() {
                         {
                             id: PARAMETER_TYPE.PARAMETER_TYPE_ID,
                             text: "ID",
-                            control:PARAMETERS.PARAMETER_TEXTBOX
+                            control:PARAMETERS.PARAMETER_DATALIST,
+                            source:DATALIST_SOURCE.DATALIST_SOURCE_ID
                         }
                     ]
                 },
@@ -275,7 +320,8 @@ let palette = function() {
                         {
                             id: PARAMETER_TYPE.PARAMETER_TYPE_ID,
                             text:"ID",
-                            control:PARAMETERS.PARAMETER_TEXTBOX
+                            control:PARAMETERS.PARAMETER_DATALIST,
+                            source:DATALIST_SOURCE.DATALIST_SOURCE_ID
                         },
                         {
                             id:  PARAMETER_TYPE.PARAMETER_TYPE_DIRECTION,
@@ -298,27 +344,81 @@ let palette = function() {
                     parameters: [
                         {
                             id: PARAMETER_TYPE.PARAMETER_TYPE_DOOR1,
-                            text:"Door1", control:PARAMETERS.PARAMETER_TEXTBOX
+                            text:"Door1", control:PARAMETERS.PARAMETER_DATALIST,
+                            source:DATALIST_SOURCE.DATALIST_SOURCE_ID
                         },
                         { 
                             id: PARAMETER_TYPE.PARAMETER_TYPE_DOOR2,
-                            text:"Door2", control:PARAMETERS.PARAMETER_TEXTBOX 
+                            text:"Door2", control:PARAMETERS.PARAMETER_DATALIST,
+                            source:DATALIST_SOURCE.DATALIST_SOURCE_ID
                         },
                         {
                             id: PARAMETER_TYPE.PARAMETER_TYPE_DOOR3,
-                            text:"Door3", control:PARAMETERS.PARAMETER_TEXTBOX
+                            text:"Door3", control:PARAMETERS.PARAMETER_DATALIST,
+                            source:DATALIST_SOURCE.DATALIST_SOURCE_ID
                         },
                         {
                             id: PARAMETER_TYPE.PARAMETER_TYPE_DOOR4,
-                            text:"Door4", control:PARAMETERS.PARAMETER_TEXTBOX
+                            text:"Door4", control:PARAMETERS.PARAMETER_DATALIST,
+                            source:DATALIST_SOURCE.DATALIST_SOURCE_ID
                         },
                         {
                             id: PARAMETER_TYPE.PARAMETER_TYPE_FAN1,
-                            text:"Fan1", control:PARAMETERS.PARAMETER_TEXTBOX
+                            text:"Fan1", control:PARAMETERS.PARAMETER_DATALIST,
+                            source:DATALIST_SOURCE.DATALIST_SOURCE_ID
                         },
                         {
                             id: PARAMETER_TYPE.PARAMETER_TYPE_FAN2,
-                            text:"Fan2", control:PARAMETERS.PARAMETER_TEXTBOX
+                            text:"Fan2", control:PARAMETERS.PARAMETER_DATALIST,
+                            source:DATALIST_SOURCE.DATALIST_SOURCE_ID
+                        }
+                    ]
+                },
+                {
+                    id: TILE_TYPES.TILE_BARRIER,
+                    type: "barrier",
+                    value: "B",
+                    parameters: [ {
+                            id: PARAMETER_TYPE.PARAMETER_TYPE_ID,
+                            text:"ID",
+                            control:PARAMETERS.PARAMETER_DATALIST,
+                            source:DATALIST_SOURCE.DATALIST_SOURCE_ID
+                        },
+                        {
+                            id: PARAMETER_TYPE.PARAMETER_TYPE_RALLYPOINT_ID1,
+                            text:"RallyPoint1",
+                            control:PARAMETERS.PARAMETER_DATALIST,
+                            source:DATALIST_SOURCE.DATALIST_SOURCE_ID
+                        },
+                        {
+                            id: PARAMETER_TYPE.PARAMETER_TYPE_RALLYPOINT_ID2,
+                            text:"RallyPoint2",
+                            control:PARAMETERS.PARAMETER_DATALIST,
+                            source:DATALIST_SOURCE.DATALIST_SOURCE_ID
+                        },
+                        {
+                            id: PARAMETER_TYPE.PARAMETER_TYPE_RALLYPOINT_ID3,
+                            text:"RallyPoint3",
+                            control:PARAMETERS.PARAMETER_DATALIST,
+                            source:DATALIST_SOURCE.DATALIST_SOURCE_ID
+                        },
+                        {
+                            id: PARAMETER_TYPE.PARAMETER_TYPE_RALLYPOINT_ID4,
+                            text:"RallyPoint4",
+                            control:PARAMETERS.PARAMETER_DATALIST,
+                            source:DATALIST_SOURCE.DATALIST_SOURCE_ID
+                        }
+                    ]
+                },
+                {
+                    id: TILE_TYPES.TILE_TESLA_COIL,
+                    type: "coil",
+                    value: "C",
+                    parameters: [ {
+                            id: PARAMETER_TYPE.PARAMETER_TYPE_ID,
+                            text:"ID",
+                            control:PARAMETERS.PARAMETER_DATALIST,
+                            source:DATALIST_SOURCE.DATALIST_SOURCE_ID
                         }
                     ]
                 }
