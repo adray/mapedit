@@ -105,7 +105,9 @@ const ENEMY_TYPES = {
         { Name: "Shade", Rating: 4 },
         { Name: "Shadow Warrior", Rating: 4 },
         { Name: "MultiHead", Rating: 5 },
-        { Name: "Dino", Rating: 5 }
+        { Name: "Dino", Rating: 5 },
+        { Name: "Statue", Rating: 6 },
+        { Name: "Knight", Rating: 6 }
     ]
 };
 const DATALIST_SOURCE = {
