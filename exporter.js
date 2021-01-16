@@ -848,6 +848,24 @@ let exporter = function() {
                         context.output += context.padding + '</Barrier>' + context.newline;
                     }
                     break;
+                case "posionPot":
+                    if (id != undefined && id !== "") { // can be null?   
+                        context.output += context.padding +
+                            `<PosionPot X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}" ID="${id}" />` + context.newline;
+                    } else {
+                        context.output += context.padding +
+                            `<PosionPot X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}" />` + context.newline;
+                    }
+                    break;
+                case "dartBlock":
+                    if (id != undefined && id !== "") { // can be null?   
+                        context.output += context.padding +
+                            `<DartBlock X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}" ID="${id}" />` + context.newline;
+                    } else {
+                        context.output += context.padding +
+                            `<DartBlock X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}" />` + context.newline;
+                    }
+                    break;
             }
         }
 

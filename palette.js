@@ -421,6 +421,30 @@ let palette = function() {
                             source:DATALIST_SOURCE.DATALIST_SOURCE_ID
                         }
                     ]
+                },
+                {
+                    id: TILE_TYPES.TILE_POSION_POT,
+                    type: "posionPot",
+                    value: "P",
+                    parameters: [ {
+                            id: PARAMETER_TYPE.PARAMETER_TYPE_ID,
+                            text:"ID",
+                            control:PARAMETERS.PARAMETER_DATALIST,
+                            source:DATALIST_SOURCE.DATALIST_SOURCE_ID
+                        }
+                    ]
+                },
+                {
+                    id: TILE_TYPES.TILE_DART_BLOCK,
+                    type: "dartBlock",
+                    value: "DB",
+                    parameters: [ {
+                            id: PARAMETER_TYPE.PARAMETER_TYPE_ID,
+                            text:"ID",
+                            control:PARAMETERS.PARAMETER_DATALIST,
+                            source:DATALIST_SOURCE.DATALIST_SOURCE_ID
+                        }
+                    ]
                 }
             ];
         }
