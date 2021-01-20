@@ -255,7 +255,9 @@ let palette = function() {
                             id: PARAMETER_TYPE.PARAMETER_TYPE_RARITY,
                             text: "Rarity",
                             control:PARAMETERS.PARAMETER_DROPDOWN,
-                            values: [CHEST_RARITY.CHEST_RARITY_COMMON, CHEST_RARITY.CHEST_RARITY_RARE]
+                            values: [CHEST_RARITY.CHEST_RARITY_COMMON, CHEST_RARITY.CHEST_RARITY_UNCOMMON,
+                                CHEST_RARITY.CHEST_RARITY_RARE, CHEST_RARITY.CHEST_RARITY_EPIC,
+                                CHEST_RARITY.CHEST_RARITY_ULTRA, CHEST_RARITY.CHEST_RARITY_UNIQUE]
                         }, 
                         {
                             id: PARAMETER_TYPE.PARAMETER_TYPE_HIDDEN,

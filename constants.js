@@ -70,7 +70,11 @@ const PARAMETER_TYPE = {
 };
 const CHEST_RARITY = {
     CHEST_RARITY_COMMON: "Common",
-    CHEST_RARITY_RARE: "Rare"
+    CHEST_RARITY_UNCOMMON: "Uncommon",
+    CHEST_RARITY_RARE: "Rare",
+    CHEST_RARITY_EPIC: "Epic",
+    CHEST_RARITY_ULTRA: "Ultra",
+    CHEST_RARITY_UNIQUE: "Unique"
 };
 const HOLE_TYPE = {
     HOLE_TYPE_NONE: "None",
