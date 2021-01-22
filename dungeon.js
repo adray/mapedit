@@ -109,7 +109,11 @@ Vue.component('editor', {
                 loadMapCallback: undefined,
                 exportedData: "",
                 palette: palette.createPallete(),
-                dungeonName: ""
+                dungeonName: "",
+                objectTileSet: "",
+                roomTileSet: "",
+                wallTileSet: "",
+                backDrop: ""
             };
         },
         methods: {
@@ -146,9 +150,10 @@ Vue.component('editor', {
                 const indent = "    ";
 
                 this.exportedData += "<Dungeon" + newline +
-                    indent + `ObjectTileSet="Debug"` + newline +
-                    indent + `RoomTileSet="Dungeon"` + newline +
-                    indent + `WallTileSet="Tomb">` + newline;
+                    indent + `ObjectTileSet="${this.objectTileSet}"` + newline +
+                    indent + `RoomTileSet="${this.roomTileSet}"` + newline +
+                    indent + `WallTileSet="${this.wallTileSet}"` + newline +
+                    indent + `Backdrop="${this.backDrop}">` + newline;
 
                 for(let floorIndex = 0; floorIndex < this.tiles.length; floorIndex++){
                     let tile = this.tiles[floorIndex];
@@ -229,7 +234,11 @@ Vue.component('editor', {
 
                 let dungeonData = {
                     numberOfFloors: this.gridHeight,
-                    floors: floors
+                    floors: floors,
+                    objectTileSet: this.objectTileSet,
+                    roomTileSet: this.roomTileSet,
+                    wallTileSet: this.wallTileSet,
+                    backDrop: this.backDrop
                 };
 
                 storage.saveDungeonData(this.dungeonName, JSON.stringify(dungeonData));
@@ -246,6 +255,10 @@ Vue.component('editor', {
                     let dungeonInfo = JSON.parse(dungeonData);
 
                     this.dungeonName = dungeon;
+                    this.objectTileSet = dungeonInfo.objectTileSet;
+                    this.roomTileSet = dungeonInfo.roomTileSet;
+                    this.wallTileSet = dungeonInfo.wallTileSet;
+                    this.backDrop = dungeonInfo.backDrop;
                     this.$refs.height.value = Number(dungeonInfo.numberOfFloors);
                     this.resize();
 
@@ -281,6 +294,12 @@ Vue.component('editor', {
             <button name="save" v-on:click="saveDungeon">Save</button>\
             <button name="load" v-on:click="showLoadDungeonMenu">Load</button>\
             <button name="export" v-on:click="exportDungeon">Export</button>\
+            <div>\
+                Object Tileset:<input type="text" v-model="objectTileSet" />\
+                Room Tileset:<input type="text" v-model="roomTileSet" />\
+                Wall Tileset:<input type="text" v-model="wallTileSet" />\
+                Backdrop:<input type="text" v-model="backDrop" />\
+            </div>\
             <div>\
                 <textarea class="export">{{ exportedData }}</textarea>\
             </div>\
