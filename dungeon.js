@@ -206,7 +206,7 @@ Vue.component('editor', {
             exportFloorData: function() {
                 this.exportedFloorData = "";
                 const newline = "\r\n";
-                for(let floorIndex = 0; floorIndex < this.tiles.length; floorIndex++){
+                for(let floorIndex = 1; floorIndex < this.tiles.length; floorIndex++){
                     this.exportedFloorData += "TriggerOneFrom(dungeon";
                     let tile = this.tiles[floorIndex];
                     let mapIndex = 1;
