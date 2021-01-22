@@ -255,10 +255,10 @@ Vue.component('editor', {
                     let dungeonInfo = JSON.parse(dungeonData);
 
                     this.dungeonName = dungeon;
-                    this.objectTileSet = dungeonInfo.objectTileSet;
-                    this.roomTileSet = dungeonInfo.roomTileSet;
-                    this.wallTileSet = dungeonInfo.wallTileSet;
-                    this.backDrop = dungeonInfo.backDrop;
+                    this.objectTileSet = dungeonInfo.objectTileSet || "";
+                    this.roomTileSet = dungeonInfo.roomTileSet || "";
+                    this.wallTileSet = dungeonInfo.wallTileSet || "";
+                    this.backDrop = dungeonInfo.backDrop || "";
                     this.$refs.height.value = Number(dungeonInfo.numberOfFloors);
                     this.resize();
 
