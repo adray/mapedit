@@ -108,6 +108,7 @@ Vue.component('editor', {
                 showLoadDungeon: false,
                 loadMapCallback: undefined,
                 exportedData: "",
+                exportedFloorData: "",
                 palette: palette.createPallete(),
                 dungeonName: "",
                 objectTileSet: "",
@@ -200,6 +201,21 @@ Vue.component('editor', {
                 }
 
                 this.exportedData += "</Dungeon>" + newline;
+                this.exportFloorData();
+            },
+            exportFloorData: function() {
+                this.exportedFloorData = "";
+                const newline = "\r\n";
+                for(let floorIndex = 0; floorIndex < this.tiles.length; floorIndex++){
+                    this.exportedFloorData += "TriggerOneFrom(dungeon";
+                    let tile = this.tiles[floorIndex];
+                    let mapIndex = 1;
+                    for (let map of tile.maps) {
+                        this.exportedFloorData += `, "Trigger_${tile.floorId}-${mapIndex}"`;
+                        mapIndex++;
+                    }
+                    this.exportedFloorData += ");" + newline;
+                }
             },
             createGrid: function(width, height) {
                 let tiles = [];
@@ -302,6 +318,9 @@ Vue.component('editor', {
             </div>\
             <div>\
                 <textarea class="export">{{ exportedData }}</textarea>\
+            </div>\
+            <div>\
+                <textarea class="export">{{ exportedFloorData }}</textarea>\
             </div>\
             <loadMap v-if="showLoadMap" v-on:exitLoadMap="exitLoadMap" v-on:loadMap="loadMap($event)" />\
             <loadDungeon v-if="showLoadDungeon" v-on:exitLoadDungeon="exitLoadDungeon" v-on:loadDungeon="loadDungeon($event)" />\
