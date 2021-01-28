@@ -155,6 +155,7 @@ let exporter = function() {
                 tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_TESLA_COIL1],
                 tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_TESLA_COIL2]
             ];
+            let boss = tile.parameters[PARAMETER_TYPE.PARAMETER_TYPE_BOSS] || false;
 
             switch (tile.type) {
                 case "start":
@@ -309,6 +310,9 @@ let exporter = function() {
                             `<AI X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}" OnSight="${trigger}"`;
                         if (elite) {
                             context.output += ` Aura="True"`;
+                        }
+                        if (boss) {
+                            context.output += ` Boss="True"`;
                         }
                         if (cloak) {
                             context.output += ` Cloak="True"`;

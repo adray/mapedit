@@ -79,6 +79,11 @@ let palette = function() {
                         control:PARAMETERS.PARAMETER_CHECKBOX
                     },
                     {
+                        id: PARAMETER_TYPE.PARAMETER_TYPE_BOSS,
+                        text:"Boss",
+                        control:PARAMETERS.PARAMETER_CHECKBOX
+                    },
+                    {
                         id: PARAMETER_TYPE.PARAMETER_TYPE_CLOAK,
                         text:"Cloak",
                         control:PARAMETERS.PARAMETER_CHECKBOX
