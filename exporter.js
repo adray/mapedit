@@ -949,7 +949,7 @@ let exporter = function() {
             }
             context.indent();
             for (let enemyId of enemy.enemies) {
-                if (enemyId != undefined) { // enemyId can be null?
+                if (enemyId != undefined && enemyId !== "") { // enemyId can be null?
                     context.output += context.padding + `<Enemy Type="${enemyId}" />` + context.newline;
                 }
             }
