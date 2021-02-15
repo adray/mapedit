@@ -628,13 +628,36 @@ let exporter = function() {
                         }
                         context.unindent();
 
-                        if (doorData === "" && bridgeData === "" && spikeData === "" && fanData === "" && coilData === "" && barrierData === "") {
+                        let fileData = "";
+                        context.indent();
+                        let fileCount = Math.floor(Math.random() * Math.min(3, context.terminalLogs.length + 1));
+                        for (let i = 0; i < fileCount; i++) {
+                            if (fileData === "") {
+                                fileData += context.padding + `<Files>` + context.newline;
+                                context.indent();
+                            }
+
+                            let fileIndex = Math.floor(Math.random() * (context.terminalLogs.length - i)) + i;
+                            let file = context.terminalLogs[fileIndex];
+                            context.terminalLogs[fileIndex] = context.terminalLogs[i];
+                            context.terminalLogs[i] = file;
+
+                            fileData += context.padding + `<File ID="${file.value}" />` + context.newline;
+                        }
+
+                        if (fileData !== "") {
+                            context.unindent();
+                            fileData += context.padding + `</Files>` + context.newline;
+                        }
+                        context.unindent();
+
+                        if (doorData === "" && bridgeData === "" && spikeData === "" && fanData === "" && coilData === "" && barrierData === "" && fileData === "") {
                             context.output += context.padding +
                                `<Terminal X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}" />` + context.newline;
                         } else {
                             context.output += context.padding +
                                 `<Terminal X="${tile.x + context.offsetX}" Y="${tile.y + context.offsetY}">` + context.newline
-                                + doorData + bridgeData + spikeData + fanData + barrierData + coilData + context.padding + "</Terminal>" + context.newline;
+                                + doorData + bridgeData + spikeData + fanData + barrierData + coilData + fileData + context.padding + "</Terminal>" + context.newline;
                         }
                     }
                     break;
@@ -966,9 +989,19 @@ let exporter = function() {
         }
     }
 
+    function trimList(list) {
+        let outList = [];
+        for (let elem of list) {
+            if (elem.value !== "") {
+                outList.push(elem);
+            }
+        }
+        return outList;
+    }
+
     let exportMap = function(tiles, width, height, effect,
         floorId="Floor", floorTitle="F1", nextFloorTitle="", initialPadding="", isBaseFloor=true,
-        dungeonName="Dungeon") {
+        dungeonName="Dungeon", terminalLogs=[]) {
         let context = {
             tiles: tiles,
             output: "",
@@ -985,6 +1018,7 @@ let exporter = function() {
             dungeonName: dungeonName,
             startPoints: [],
             enemies: [],
+            terminalLogs: trimList(terminalLogs),
             indent: function() {
                 this.padding += "    ";
             },

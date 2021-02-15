@@ -50,6 +50,26 @@ Vue.component('loadMap', {
     }
 });
 
+Vue.component('loadTerminal', {
+    template: '<div class="loadMapWindow">\
+            <input v-for="terminal in getTerminals" v-model="terminal.value" />\
+            <div>\
+                <button v-on:click="okMenu">Ok</button>\
+            </div>\
+        </div>',
+    props: [ "logs" ],
+    computed: {
+        getTerminals: function() {
+            return this.logs;
+        }
+    },
+    methods: {
+        okMenu: function() {
+            this.$emit("loadTerminal");
+        }
+    }
+});
+
 Vue.component('dungeonRow', {
     template: '<span><button v-on:click="$emit(`loadDungeon`, name)">{{name}}</button></span>',
     props: [ "name" ]
@@ -114,10 +134,19 @@ Vue.component('editor', {
                 objectTileSet: "",
                 roomTileSet: "",
                 wallTileSet: "",
-                backDrop: ""
+                backDrop: "",
+                showLoadTerminal: false,
+                logs: this.createDefaultLogs()
             };
         },
         methods: {
+            createDefaultLogs: function() {
+                let logs = [];
+                for (let i = 0; i < 5; i++) {
+                    logs.push({ value: "" });
+                }
+                return logs;
+            },
             resize: function() {
                 this.gridHeight = this.$refs.height.value;
                 this.tiles = [];
@@ -192,7 +221,8 @@ Vue.component('editor', {
                                     hasNext ? this.tiles[floorIndex+1].floorTitle : "",
                                     indent,
                                     floorIndex === 0,
-                                    this.dungeonName) +
+                                    this.dungeonName,
+                                    this.logs) +
                                 newline;
                         }
 
@@ -254,7 +284,8 @@ Vue.component('editor', {
                     objectTileSet: this.objectTileSet,
                     roomTileSet: this.roomTileSet,
                     wallTileSet: this.wallTileSet,
-                    backDrop: this.backDrop
+                    backDrop: this.backDrop,
+                    logs: this.logs
                 };
 
                 storage.saveDungeonData(this.dungeonName, JSON.stringify(dungeonData));
@@ -275,6 +306,7 @@ Vue.component('editor', {
                     this.roomTileSet = dungeonInfo.roomTileSet || "";
                     this.wallTileSet = dungeonInfo.wallTileSet || "";
                     this.backDrop = dungeonInfo.backDrop || "";
+                    this.logs = dungeonInfo.logs || this.createDefaultLogs();
                     this.$refs.height.value = Number(dungeonInfo.numberOfFloors);
                     this.resize();
 
@@ -290,6 +322,12 @@ Vue.component('editor', {
             },
             exitLoadDungeon: function() {
                 this.showLoadDungeon = false;
+            },
+            showTerminalLogs: function() {
+                this.showLoadTerminal = true;
+            },
+            loadTerminal: function() {
+                this.showLoadTerminal = false;
             }
         },
         template: `\
@@ -315,6 +353,7 @@ Vue.component('editor', {
                 Room Tileset:<input type="text" v-model="roomTileSet" />\
                 Wall Tileset:<input type="text" v-model="wallTileSet" />\
                 Backdrop:<input type="text" v-model="backDrop" />\
+                <button name="terminal" v-on:click="showTerminalLogs">Terminal</button>\
             </div>\
             <div>\
                 <textarea class="export">{{ exportedData }}</textarea>\
@@ -324,6 +363,7 @@ Vue.component('editor', {
             </div>\
             <loadMap v-if="showLoadMap" v-on:exitLoadMap="exitLoadMap" v-on:loadMap="loadMap($event)" />\
             <loadDungeon v-if="showLoadDungeon" v-on:exitLoadDungeon="exitLoadDungeon" v-on:loadDungeon="loadDungeon($event)" />\
+            <loadTerminal v-if="showLoadTerminal" v-on:loadTerminal="loadTerminal($event)" v-bind:logs="logs" />\
         </div>`
     });
 
