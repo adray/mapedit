@@ -29,7 +29,7 @@ let exporter = function() {
 
         // Things which should only appear in a 1x1 room
         function isSingleTileRoom(tile) {
-            return tile.type === "icespike";
+            return tile.type === "icespike" || tile.type === "dartBlock";
         }
 
         function is2x2Allowed(tile, parentHidden) {
